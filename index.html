@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unge Feminister FPL – Hvem sitter på Egon?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #0b000f;
+      --surface:  #130019;
+      --surface2: #1a0022;
+      --surface3: #210029;
+      --border:   rgba(255,255,255,0.07);
+      --border2:  rgba(255,255,255,0.12);
+      --green:    #00e87a;
+      --green2:   #00ff85;
+      --cyan:     #04f5ff;
+      --pink:     #ff1a6b;
+      --orange:   #ff7a1a;
+      --gold:     #f5c842;
+      --text:     #e8e8f0;
+      --muted:    #7a7a90;
+      --muted2:   #4a4a60;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── TOP NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(11,0,15,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    .nav-logo {
+      font-weight: 800; font-size: 0.95rem; letter-spacing: 0.5px;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .nav-logo .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+    .nav-links {
+      display: flex; gap: 0.3rem;
+    }
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: 0.82rem; font-weight: 500;
+      padding: 0.3rem 0.8rem; border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--surface2); }
+    .nav-badge {
+      background: var(--pink); color: #fff;
+      font-size: 0.72rem; font-weight: 700;
+      padding: 0.2rem 0.7rem; border-radius: 99px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 340px;
+      background: linear-gradient(170deg, #1a0022 0%, #0b000f 50%, #0d0015 100%);
+      position: relative; overflow: hidden;
+      display: flex; align-items: center;
+      padding: 4rem 2rem 3rem;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 40%, rgba(0,232,122,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 85% 20%, rgba(255,26,107,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto; width: 100%;
+      display: flex; flex-direction: column; gap: 1.2rem;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 99px; padding: 0.3rem 1rem;
+      font-size: 0.75rem; color: var(--muted); font-weight: 500;
+      width: fit-content;
+    }
+    .hero-eyebrow .live { width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.2)} }
+    .hero h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 3.4rem; line-height: 1.05;
+      font-weight: 400; letter-spacing: -0.5px;
+    }
+    .hero h1 em { font-style: italic; color: var(--green); }
+    .hero-sub {
+      font-size: 1rem; color: var(--muted); max-width: 520px;
+    }
+    .hero-stats {
+      display: flex; gap: 2.5rem; margin-top: 0.5rem;
+    }
+    .hero-stat .hs-val { font-size: 1.6rem; font-weight: 800; }
+    .hero-stat .hs-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+    .gw-indicator {
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .gw-track {
+      flex: 1; max-width: 280px;
+      height: 5px; background: var(--surface3); border-radius: 99px; overflow: hidden;
+    }
+    .gw-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--cyan)); border-radius: 99px; }
+    .gw-label { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+
+    /* ── LAYOUT ── */
+    main {
+      max-width: 1140px; margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+      display: flex; flex-direction: column; gap: 2rem;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 2.2rem; }
+      nav .nav-links { display: none; }
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.6rem;
+      position: relative; overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    }
+    .card-title {
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--muted); margin-bottom: 1.4rem;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .card-title .ct-icon { font-size: 0.9rem; }
+    .card-title::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, var(--border2), transparent);
+    }
+
+    /* ── EGON SHOWCASE ── */
+    .egon-card {
+      border: 1px solid rgba(255,122,26,0.3);
+      border-radius: 20px;
+      overflow: hidden;
+      display: grid; grid-template-columns: 1fr 1fr;
+      min-height: 320px;
+      background: var(--surface);
+    }
+    @media (max-width: 700px) { .egon-card { grid-template-columns: 1fr; } }
+    .egon-photo {
+      position: relative; overflow: hidden;
+      min-height: 260px;
+    }
+    .egon-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      filter: brightness(0.85) saturate(1.1);
+      transition: transform 0.6s ease;
+    }
+    .egon-photo:hover img { transform: scale(1.04); }
+    .egon-photo-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,122,26,0.2) 0%, transparent 60%),
+                  linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
+    }
+    .egon-photo-label {
+      position: absolute; bottom: 1rem; left: 1rem;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 0.4rem 0.8rem;
+      font-size: 0.72rem; color: #ccc;
+    }
+    .egon-info {
+      padding: 2rem;
+      display: flex; flex-direction: column; justify-content: center; gap: 1.4rem;
+      background: linear-gradient(135deg, #1a0800, #110010);
+    }
+    .egon-brand {
+      display: flex; flex-direction: column; gap: 0.3rem;
+    }
+    .egon-brand .brand-eyebrow {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--orange);
+    }
+    .egon-brand h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.2rem; line-height: 1; color: #fff;
+    }
+    .egon-brand h2 span { color: var(--orange); }
+    .egon-brand .location {
+      font-size: 0.8rem; color: var(--muted);
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .egon-sentence {
+      font-size: 0.9rem; color: #ccc; line-height: 1.6;
+    }
+    .egon-sentence strong { color: var(--orange); }
+    .egon-rules-list {
+      display: flex; flex-direction: column; gap: 0.6rem;
+    }
+    .egon-rule-item {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.7rem 1rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,122,26,0.15);
+      border-radius: 10px;
+      font-size: 0.84rem;
+    }
+    .egon-rule-item .ri-icon { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+    .egon-rule-item .ri-text { color: #ccc; }
+    .egon-rule-item .ri-text strong { color: var(--text); }
+    .beer-badge {
+      display: flex; align-items: center; gap: 1rem;
+      background: linear-gradient(135deg, rgba(245,200,66,0.12), rgba(255,122,26,0.08));
+      border: 1px solid rgba(245,200,66,0.3);
+      border-radius: 12px; padding: 1rem 1.2rem;
+    }
+    .beer-badge .bb-icon { font-size: 2rem; }
+    .beer-badge .bb-text .bb-title { font-size: 0.68rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); }
+    .beer-badge .bb-text .bb-main { font-size: 1.1rem; font-weight: 800; color: #fff; }
+    .beer-badge .bb-text .bb-sub { font-size: 0.75rem; color: var(--muted); }
+
+    /* ── SUMMARY STATS ── */
+    .summary-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+    }
+    @media (max-width: 700px) { .summary-grid { grid-template-columns: repeat(2,1fr); } }
+    .summary-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.2rem 1.1rem;
+      position: relative; overflow: hidden;
+    }
+    .summary-card::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      border-radius: 14px 14px 0 0;
+    }
+    .summary-card.gold::after { background: linear-gradient(90deg, var(--gold), transparent); }
+    .summary-card.red::after  { background: linear-gradient(90deg, var(--pink), transparent); }
+    .summary-card.cyan::after { background: linear-gradient(90deg, var(--cyan), transparent); }
+    .summary-card.grn::after  { background: linear-gradient(90deg, var(--green), transparent); }
+    .sc-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .sc-val { font-size: 1.5rem; font-weight: 800; line-height: 1; }
+    .sc-sub { font-size: 0.72rem; color: var(--muted2); margin-top: 0.3rem; }
+    .sc-icon { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.8rem; opacity: 0.12; }
+
+    /* ── EGON METER ── */
+    .meter-card {
+      background: var(--surface);
+      border: 1px solid rgba(255,26,107,0.2);
+      border-radius: 16px;
+      padding: 1.8rem;
+      position: relative; overflow: hidden;
+    }
+    .meter-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,26,107,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .meter-header { margin-bottom: 1.6rem; }
+    .meter-header h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.6rem; line-height: 1.1; font-weight: 400;
+    }
+    .meter-header h2 em { font-style: italic; color: var(--pink); }
+    .meter-header p { color: var(--muted); font-size: 0.8rem; margin-top: 0.3rem; }
+
+    .danger-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .danger-item {
+      display: grid;
+      grid-template-columns: 190px 1fr 72px;
+      align-items: center; gap: 1.2rem;
+    }
+    @media (max-width: 600px) { .danger-item { grid-template-columns: 130px 1fr 55px; gap: 0.6rem; } }
+    .di-name { text-align: right; }
+    .di-name strong { display: block; font-size: 0.86rem; font-weight: 600; }
+    .di-name span { font-size: 0.71rem; color: var(--muted2); }
+    .di-bar-track {
+      height: 20px; background: rgba(255,255,255,0.04);
+      border-radius: 99px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .di-bar-fill {
+      height: 100%; border-radius: 99px;
+      min-width: 2px;
+    }
+    .di-pct { font-size: 0.95rem; font-weight: 800; white-space: nowrap; }
+    .meter-note { margin-top: 1rem; font-size: 0.72rem; color: var(--muted2); text-align: center; }
+
+    /* ── STANDINGS TABLE ── */
+    .standings-wrap { overflow-x: auto; }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 0.86rem;
+      min-width: 620px;
+    }
+    thead th {
+      padding: 0.6rem 0.9rem;
+      border-bottom: 1px solid var(--border2);
+      font-size: 0.67rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: var(--muted); text-align: left; white-space: nowrap;
+    }
+    thead th.r { text-align: right; }
+    tbody td {
+      padding: 0.85rem 0.9rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr { transition: background 0.1s; }
+    tbody tr:hover td { background: rgba(255,255,255,0.025); }
+    .rank-chip {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem;
+      background: var(--surface3); color: var(--muted);
+    }
+    .rank-chip.p1 { background: rgba(245,200,66,0.15); color: var(--gold); }
+    .rank-chip.p2 { background: rgba(192,192,192,0.12); color: #c0c0c0; }
+    .rank-chip.p3 { background: rgba(205,127,50,0.12); color: #cd7f32; }
+    .rank-chip.p10 { background: rgba(255,26,107,0.12); color: var(--pink); }
+    .pn-main { font-weight: 600; font-size: 0.88rem; }
+    .pn-sub { font-size: 0.72rem; color: var(--muted2); }
+    .pts-val { font-weight: 800; font-size: 0.95rem; }
+    .pts-gw { font-size: 0.78rem; color: var(--muted); }
+    .trend-chip { font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 2px; }
+    .trend-chip.up { color: var(--green); }
+    .trend-chip.dn { color: var(--pink); }
+    .trend-chip.eq { color: var(--muted2); }
+    .form-pip { display: inline-flex; gap: 3px; align-items: center; }
+    .pip { width: 10px; height: 10px; border-radius: 3px; }
+    .pip.hi { background: var(--green); }
+    .pip.md { background: var(--orange); }
+    .pip.lo { background: var(--pink); }
+    .risk-pill {
+      display: inline-block;
+      padding: 0.2rem 0.7rem; border-radius: 99px;
+      font-size: 0.75rem; font-weight: 700;
+    }
+    .risk-pill.hi { background: rgba(255,26,107,0.15); color: var(--pink); border: 1px solid rgba(255,26,107,0.3); }
+    .risk-pill.md { background: rgba(255,122,26,0.12); color: var(--orange); border: 1px solid rgba(255,122,26,0.25); }
+    .risk-pill.lo { background: rgba(0,232,122,0.08); color: var(--green); border: 1px solid rgba(0,232,122,0.2); }
+
+    /* ── CHARTS ── */
+    .chart-box { position: relative; height: 360px; }
+    .chart-box.short { height: 280px; }
+
+    footer {
+      text-align: center; padding: 2.5rem 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted2); font-size: 0.75rem;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="dot"></span>
+    Unge Feminister FPL
+  </div>
+  <div class="nav-links">
+    <a href="#meter">Egon-meter</a>
+    <a href="#standings">Stilling</a>
+    <a href="#charts">Statistikk</a>
+  </div>
+  <span class="nav-badge">GW31 / 38</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="live"></span>
+      Sesong 2025/26 · Liga #1924829 · Oppdatert etter GW31
+    </div>
+    <h1>Hvem sitter<br>på <em>Egon?</em></h1>
+    <p class="hero-sub">
+      Premier League Fantasy — en privat liga der taperen betaler med tid.
+      10 sammenhengende timer på Egon Stavanger venter én av disse ti.
+    </p>
+    <div class="gw-indicator">
+      <div class="gw-track">
+        <div class="gw-fill" style="width: 81.57%"></div>
+      </div>
+      <span class="gw-label">31 av 38 runder spilt — <strong>7 igjen</strong></span>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hs-val" style="color:var(--gold)">1825</div>
+        <div class="hs-lbl">Ledende poeng</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hs-val" style="color:var(--pink)">1600</div>
+        <div class="hs-lbl">Siste plass</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hs-val">225</div>
+        <div class="hs-lbl">Poengdifferanse</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- EGON SHOWCASE -->
+  <div class="egon-card">
+    <div class="egon-photo">
+      <img src="https://egon.no/media/wp2nuahl/img_5570.jpg"
+           alt="Egon Restaurant Stavanger"
+           onerror="this.parentElement.style.background='linear-gradient(135deg,#1a0800,#3d1500)';this.style.display='none'" />
+      <div class="egon-photo-overlay"></div>
+      <div class="egon-photo-label">📍 Strandkaien 2, Stavanger</div>
+    </div>
+    <div class="egon-info">
+      <div class="egon-brand">
+        <span class="brand-eyebrow">Straffens arena</span>
+        <h2>Egon <span>Stavanger</span></h2>
+        <span class="location">📍 Strandkaien 2 · Havnepromenade</span>
+      </div>
+      <p class="egon-sentence">
+        Norges største Egon-restaurant med utsikt over Stavangerbukta.
+        Taperen i ligaen holder ut i <strong>10 sammenhengende timer</strong> —
+        fra åpning til sent på kvelden.
+      </p>
+      <div class="egon-rules-list">
+        <div class="egon-rule-item">
+          <span class="ri-icon">⏰</span>
+          <span class="ri-text"><strong>10 timer</strong> sammenhengende — ingen pauser</span>
+        </div>
+        <div class="egon-rule-item">
+          <span class="ri-icon">📅</span>
+          <span class="ri-text">Avgjøres etter <strong>GW38</strong>, mai 2026</span>
+        </div>
+      </div>
+      <div class="beer-badge">
+        <span class="bb-icon">🍺</span>
+        <div class="bb-text">
+          <div class="bb-title">Tidlig-deal</div>
+          <div class="bb-main">1 øl = −30 minutter</div>
+          <div class="bb-sub">Kjøp deg ned i straff, ett glass av gangen</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-grid">
+    <div class="summary-card gold">
+      <div class="sc-label">Leder</div>
+      <div class="sc-val" style="color:var(--gold)">Jesper F.</div>
+      <div class="sc-sub">1825 pts · Team Adinatoor 5.0</div>
+      <span class="sc-icon">🥇</span>
+    </div>
+    <div class="summary-card red">
+      <div class="sc-label">Sist 🍕</div>
+      <div class="sc-val" style="color:var(--pink)">Kristoffer P.</div>
+      <div class="sc-sub">1600 pts · 225 bak leder</div>
+      <span class="sc-icon">😬</span>
+    </div>
+    <div class="summary-card cyan">
+      <div class="sc-label">Beste GW</div>
+      <div class="sc-val" style="color:var(--cyan)">104 pts</div>
+      <div class="sc-sub">Ingimar Stole · GW17</div>
+      <span class="sc-icon">⚡</span>
+    </div>
+    <div class="summary-card grn">
+      <div class="sc-label">Runder igjen</div>
+      <div class="sc-val" style="color:var(--green)">7</div>
+      <div class="sc-sub">GW32 – GW38 · ~7 uker</div>
+      <span class="sc-icon">📅</span>
+    </div>
+  </div>
+
+  <!-- EGON METER -->
+  <div class="meter-card" id="meter">
+    <div class="meter-header">
+      <h2>Egon-meter — <em>hvem taper?</em></h2>
+      <p>Monte Carlo-simulering · 100 000 scenarioer av de gjenstående 7 rundene</p>
+    </div>
+    <div class="danger-list" id="dangerList"></div>
+    <p class="meter-note" id="meterNote"></p>
+  </div>
+
+  <!-- STANDINGS -->
+  <div class="card" id="standings">
+    <div class="card-title"><span class="ct-icon">📊</span> Stillingen etter GW31</div>
+    <div class="standings-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Spiller</th>
+            <th class="r">Poeng</th>
+            <th class="r">GW31</th>
+            <th>Trend</th>
+            <th>Snitt/runde</th>
+            <th>Siste 5</th>
+            <th>Egon-risiko</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div id="charts" class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">📍</span> Posisjon per runde</div>
+      <div class="chart-box">
+        <canvas id="rankChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">📈</span> Poengutvikling</div>
+      <div class="chart-box">
+        <canvas id="progChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">🔥</span> Form — siste 5 runder</div>
+      <div class="chart-box short">
+        <canvas id="formChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">📉</span> Snittpoeng per runde</div>
+      <div class="chart-box short">
+        <canvas id="avgChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Data hentet fra Fantasy Premier League API · Liga "Unge Feminister" #1924829<br>
+  Oppdatert etter GW31 · Monte Carlo-simulering med 100 000 iterasjoner
+</footer>
+
+<script>
+// ================================================================
+// DATA
+// ================================================================
+const CURRENT_GW = 31, TOTAL_GW = 38, REMAINING = 7;
+
+const players = [
+  { name:"Jesper Fiksdal",          team:"Team Adinatoor 5.0", rank:1,  last:1,  total:1825,
+    gw:[54,47,44,89,72,74,71,64,40,72,44,40,54,66,53,69,82,34,34,46,62,55,42,66,72,67,50,72,61,71,58] },
+  { name:"Ingimar Stole",           team:"Up the tics",        rank:2,  last:2,  total:1674,
+    gw:[62,45,50,66,48,58,63,68,45,74,51,34,34,66,46,63,104,36,36,52,48,40,32,49,90,56,41,69,51,55,42] },
+  { name:"Fredrik C. Marthinussen", team:"Net six and chill",  rank:3,  last:3,  total:1666,
+    gw:[65,77,67,67,58,43,82,51,31,56,40,38,54,71,58,75,90,51,36,39,47,22,55,40,56,53,70,45,48,42,39] },
+  { name:"Vincent Rygh",            team:"McGinn & Tonic",     rank:4,  last:6,  total:1657,
+    gw:[42,49,42,70,29,30,44,37,42,70,43,37,54,48,48,72,87,41,32,65,55,23,66,61,63,79,61,60,68,71,68] },
+  { name:"Anders Molund",           team:"Lurendreierne",      rank:5,  last:7,  total:1638,
+    gw:[54,54,61,74,33,71,64,60,57,83,48,32,31,68,45,80,51,46,39,56,55,34,42,29,49,67,48,78,40,51,50] },
+  { name:"Oliver Fosse Årthun",     team:"Morning Timber",     rank:6,  last:4,  total:1633,
+    gw:[52,77,32,72,36,48,45,56,57,66,34,60,71,58,51,77,57,46,47,46,65,30,47,48,53,55,44,56,65,55,27] },
+  { name:"Stian Trædal",            team:"braut",              rank:7,  last:5,  total:1631,
+    gw:[48,56,81,55,57,68,55,67,70,34,26,36,63,53,58,78,77,46,62,41,45,51,57,67,64,44,48,56,37,31,31] },
+  { name:"Petter Vassenden",        team:"grindr",             rank:8,  last:8,  total:1621,
+    gw:[40,41,57,49,44,34,50,74,59,61,43,29,46,56,74,71,68,46,38,49,48,41,46,55,60,52,60,78,59,49,44] },
+  { name:"Vebjørn Øen",             team:"amad guy",           rank:9,  last:9,  total:1613,
+    gw:[65,52,73,69,31,30,58,45,57,68,45,27,21,78,46,53,60,56,50,46,53,27,43,73,81,78,51,49,68,38,38] },
+  { name:"Kristoffer Paulsen",      team:"Team Paulsen",       rank:10, last:10, total:1600,
+    gw:[57,53,61,56,30,25,39,43,53,61,41,34,48,50,66,87,75,41,34,23,55,49,53,54,66,63,58,70,61,39,55] },
+];
+
+// ================================================================
+// HELPERS
+// ================================================================
+const avg = a => a.reduce((s,v)=>s+v,0)/a.length;
+const std = a => { const m=avg(a); return Math.sqrt(a.reduce((s,v)=>s+(v-m)**2,0)/a.length); };
+const randN = (mu,sig) => {
+  let u=0,v=0;
+  while(!u)u=Math.random(); while(!v)v=Math.random();
+  return mu + sig * Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v);
+};
+
+players.forEach(p => {
+  p.mean  = avg(p.gw);
+  p.sigma = std(p.gw);
+  p.last5 = p.gw.slice(-5);
+});
+
+// ================================================================
+// MONTE CARLO
+// ================================================================
+const N = 100000;
+const lost = new Array(players.length).fill(0);
+for (let s=0; s<N; s++) {
+  const fin = players.map(p => {
+    let x = p.total;
+    for (let r=0; r<REMAINING; r++) x += Math.max(2, Math.round(randN(p.mean, p.sigma)));
+    return x;
+  });
+  const mn = Math.min(...fin);
+  fin.forEach((v,i)=>{ if(v===mn) lost[i]++; });
+}
+players.forEach((p,i) => p.losePct = lost[i]/N*100);
+
+// ================================================================
+// RANK HISTORY
+// ================================================================
+const rankHist = players.map(()=>[]);
+for (let gw=0; gw<CURRENT_GW; gw++) {
+  const cums = players.map(p => p.gw.slice(0,gw+1).reduce((a,b)=>a+b,0));
+  const sorted = [...cums].sort((a,b)=>b-a);
+  cums.forEach((c,i) => rankHist[i].push(sorted.indexOf(c)+1));
+}
+
+// ================================================================
+// PALETTE
+// ================================================================
+const palette = [
+  '#00e87a','#04f5ff','#ff1a6b','#ff7a1a','#a78bfa',
+  '#f5c842','#22d3ee','#fb7185','#34d399','#fb923c'
+];
+const dangerColor = pct =>
+  pct>=25 ? '#ff1a6b' : pct>=12 ? '#ff7a1a' : pct>=5 ? '#f5c842' : '#00e87a';
+const riskClass = pct =>
+  pct>=12 ? 'hi' : pct>=5 ? 'md' : 'lo';
+
+// ================================================================
+// EGON METER
+// ================================================================
+const byRisk = [...players].sort((a,b)=>b.losePct-a.losePct);
+const dl = document.getElementById('dangerList');
+byRisk.forEach(p => {
+  const col = dangerColor(p.losePct);
+  const el  = document.createElement('div');
+  el.className = 'danger-item';
+  el.innerHTML = `
+    <div class="di-name">
+      <strong>${p.name}</strong>
+      <span>${p.team}</span>
+    </div>
+    <div class="di-bar-track">
+      <div class="di-bar-fill" style="width:${Math.max(p.losePct,0.3).toFixed(2)}%;background:${col}"></div>
+    </div>
+    <div class="di-pct" style="color:${col}">${p.losePct.toFixed(1)}%</div>
+  `;
+  dl.appendChild(el);
+});
+document.getElementById('meterNote').textContent =
+  `Snitt og standardavvik per spiller brukt til å simulere ${REMAINING} gjenstående runder · ${N.toLocaleString('no')} iterasjoner`;
+
+// ================================================================
+// STANDINGS TABLE
+// ================================================================
+const chips = ['p1','p2','p3','','','','','','','p10'];
+const tbody = document.getElementById('tbody');
+players.forEach((p,i) => {
+  const diff = p.last - p.rank;
+  const tc = diff>0?'up':diff<0?'dn':'eq';
+  const tt = diff>0?`▲${diff}`:diff<0?`▼${Math.abs(diff)}`:'—';
+  const pips = p.last5.map(v => {
+    const c = v>=60?'hi':v>=40?'md':'lo';
+    return `<span class="pip ${c}"></span>`;
+  }).join('');
+  const rc = riskClass(p.losePct);
+  const col = dangerColor(p.losePct);
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><div class="rank-chip ${chips[i]||''}">${p.rank}</div></td>
+    <td><div class="pn-main">${p.name}</div><div class="pn-sub">${p.team}</div></td>
+    <td class="r"><span class="pts-val">${p.total}</span></td>
+    <td class="r"><span class="pts-gw">${p.gw[p.gw.length-1]}</span></td>
+    <td><span class="trend-chip ${tc}">${tt}</span></td>
+    <td>${p.mean.toFixed(1)}</td>
+    <td><div class="form-pip">${pips}</div></td>
+    <td><span class="risk-pill ${rc}" style="color:${col};border-color:${col}33;background:${col}14">${p.losePct.toFixed(1)}%</span></td>
+  `;
+  tbody.appendChild(tr);
+});
+
+// ================================================================
+// CHART DEFAULTS
+// ================================================================
+const gwLabels = Array.from({length:CURRENT_GW},(_,i)=>`GW${i+1}`);
+const chartDefaults = {
+  responsive: true,
+  maintainAspectRatio: false,
+  animation: { duration: 800, easing: 'easeInOutQuart' },
+  plugins: {
+    legend: { labels: { color:'#7a7a90', font:{size:10,family:'Inter'}, boxWidth:10, padding:12 } },
+  },
+  scales: {
+    x: { ticks:{color:'#4a4a60',maxTicksLimit:10,font:{size:10}}, grid:{color:'rgba(255,255,255,0.04)'} },
+    y: { ticks:{color:'#7a7a90',font:{size:10}}, grid:{color:'rgba(255,255,255,0.04)'} },
+  }
+};
+
+// ================================================================
+// RANK CHART
+// ================================================================
+new Chart(document.getElementById('rankChart'), {
+  type: 'line',
+  data: {
+    labels: gwLabels,
+    datasets: players.map((p,i) => ({
+      label: p.name.split(' ')[0],
+      data:  rankHist[i],
+      borderColor: palette[i],
+      backgroundColor: 'transparent',
+      borderWidth: (p.rank===1||p.rank===10) ? 2.5 : 1.5,
+      pointRadius: 0,
+      tension: 0.35,
+    }))
+  },
+  options: {
+    ...chartDefaults,
+    plugins: { ...chartDefaults.plugins, tooltip:{mode:'index',intersect:false,callbacks:{label:c=>` ${c.dataset.label}: #${c.parsed.y}`}} },
+    scales: {
+      x: chartDefaults.scales.x,
+      y: { ...chartDefaults.scales.y, reverse:true, min:1, max:10,
+        ticks:{...chartDefaults.scales.y.ticks, stepSize:1, callback:v=>`#${v}`} }
+    }
+  }
+});
+
+// ================================================================
+// PROGRESS CHART
+// ================================================================
+new Chart(document.getElementById('progChart'), {
+  type: 'line',
+  data: {
+    labels: gwLabels,
+    datasets: players.map((p,i) => {
+      let c=0;
+      return {
+        label: p.name.split(' ')[0],
+        data: p.gw.map(v=>{c+=v;return c;}),
+        borderColor: palette[i],
+        backgroundColor: 'transparent',
+        borderWidth: (p.rank===1||p.rank===10) ? 2.5 : 1.5,
+        pointRadius: 0, tension: 0.3,
+      };
+    })
+  },
+  options: { ...chartDefaults, plugins:{...chartDefaults.plugins, tooltip:{mode:'index',intersect:false}} }
+});
+
+// ================================================================
+// FORM CHART
+// ================================================================
+const last5L = Array.from({length:5},(_,i)=>`GW${CURRENT_GW-4+i}`);
+new Chart(document.getElementById('formChart'), {
+  type: 'line',
+  data: {
+    labels: last5L,
+    datasets: players.map((p,i) => ({
+      label: p.name.split(' ')[0],
+      data: p.last5,
+      borderColor: palette[i],
+      backgroundColor: 'transparent',
+      borderWidth: 2, pointRadius: 5, pointHoverRadius: 7, tension: 0.3,
+    }))
+  },
+  options: { ...chartDefaults, plugins:{...chartDefaults.plugins, tooltip:{mode:'index',intersect:false}} }
+});
+
+// ================================================================
+// AVG CHART
+// ================================================================
+const sortedAvg = [...players].sort((a,b)=>a.mean-b.mean);
+new Chart(document.getElementById('avgChart'), {
+  type: 'bar',
+  data: {
+    labels: sortedAvg.map(p=>p.name.split(' ')[0]),
+    datasets: [{
+      label: 'Snittpoeng/runde',
+      data: sortedAvg.map(p=>+p.mean.toFixed(1)),
+      backgroundColor: sortedAvg.map((p,i) =>
+        i===0 ? 'rgba(255,26,107,0.6)' : `${palette[i+1]||palette[i]}55`
+      ),
+      borderRadius: 6, borderSkipped: false,
+    }]
+  },
+  options: {
+    ...chartDefaults,
+    indexAxis: 'y',
+    plugins: { ...chartDefaults.plugins, legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.x} pts/runde`}} },
+    scales: {
+      x: { ...chartDefaults.scales.x, min: 47 },
+      y: { ...chartDefaults.scales.y, grid:{display:false} }
+    }
+  }
+});
+</script>
+</body>
+</html>
