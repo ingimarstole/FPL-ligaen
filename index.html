@@ -182,7 +182,7 @@
       color: var(--muted); margin-bottom: 1.2rem;
     }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(5,1fr); gap: 1rem; }
     @media (max-width: 860px) {
       .grid-2 { grid-template-columns: 1fr; }
       .grid-4 { grid-template-columns: repeat(2,1fr); }
@@ -397,6 +397,11 @@
         <div class="sc-sub" id="scBestSub">—</div>
       </div>
       <div class="summary-card">
+        <div class="sc-label">Verste GW 💀</div>
+        <div class="sc-val" style="color:var(--red)" id="scWorst">—</div>
+        <div class="sc-sub" id="scWorstSub">—</div>
+      </div>
+      <div class="summary-card">
         <div class="sc-label">Runder igjen</div>
         <div class="sc-val" id="scRem">—</div>
         <div class="sc-sub" id="scRemSub">—</div>
@@ -590,6 +595,11 @@ function render(players, currentGW, remaining, rankHist, totalGW) {
   document.getElementById('scLastSub').textContent=`${last.total} pts — ${leader.total-last.total} bak`;
   document.getElementById('scBest').textContent=`${bestPts} pts`;
   document.getElementById('scBestSub').textContent=`${bestName} · GW${bestGW}`;
+
+  let worstPts=999,worstName='',worstGW=0;
+  players.forEach(p=>p.gw.forEach((v,i)=>{if(v<worstPts){worstPts=v;worstName=p.name.split(' ')[0];worstGW=i+1;}}));
+  document.getElementById('scWorst').textContent=`${worstPts} pts`;
+  document.getElementById('scWorstSub').textContent=`${worstName} · GW${worstGW}`;
   document.getElementById('scRem').textContent=remaining;
   document.getElementById('scRemSub').textContent=`GW${currentGW+1} – GW${totalGW}`;
 
