@@ -398,15 +398,17 @@
         <div class="sc-val" style="color:var(--red)" id="scLast">—</div>
         <div class="sc-sub" id="scLastSub">—</div>
       </div>
-      <div class="summary-card">
+      <div class="summary-card gw-clickable" id="cardBest" style="cursor:pointer;" onclick="showGwModal('best')" title="Klikk for å se runden">
         <div class="sc-label">Beste GW</div>
         <div class="sc-val" id="scBest">—</div>
         <div class="sc-sub" id="scBestSub">—</div>
+        <div style="font-size:0.68rem;color:var(--muted2);margin-top:0.6rem;">Trykk for detaljer →</div>
       </div>
-      <div class="summary-card">
+      <div class="summary-card gw-clickable" id="cardWorst" style="cursor:pointer;" onclick="showGwModal('worst')" title="Klikk for å se runden">
         <div class="sc-label">Verste GW 💀</div>
         <div class="sc-val" style="color:var(--red)" id="scWorst">—</div>
         <div class="sc-sub" id="scWorstSub">—</div>
+        <div style="font-size:0.68rem;color:var(--muted2);margin-top:0.6rem;">Trykk for detaljer →</div>
       </div>
       <div class="summary-card">
         <div class="sc-label">Runder igjen</div>
@@ -544,6 +546,16 @@
     </div>
   </section>
 
+  <!-- MODAL -->
+  <div id="gwModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:24px;padding:2rem;width:90%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.2);position:relative;">
+      <button onclick="document.getElementById('gwModal').style.display='none'" style="position:absolute;top:1rem;right:1rem;background:#f5f5f7;border:none;border-radius:99px;width:32px;height:32px;font-size:1rem;cursor:pointer;">✕</button>
+      <p style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:#6e6e73;margin-bottom:0.3rem;" id="modalLabel">—</p>
+      <h3 style="font-size:1.5rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:1.5rem;" id="modalTitle">—</h3>
+      <div id="modalList" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+    </div>
+  </div>
+
   <footer>
     Data hentet fra Fantasy Premier League API · Liga "Unge Feminister" #1924829<br>
     Oppdateres automatisk tirsdag og fredag · Monte Carlo 100 000 iterasjoner
@@ -638,6 +650,84 @@ function render(players, currentGW, remaining, rankHist, totalGW) {
   players.forEach(p=>p.gw.forEach((v,i)=>{if(v<worstPts){worstPts=v;worstName=p.name.split(' ')[0];worstGW=i+1;}}));
   document.getElementById('scWorst').textContent=`${worstPts} pts`;
   document.getElementById('scWorstSub').textContent=`${worstName} · GW${worstGW}`;
+
+  // Modal for beste/verste GW
+  const GW_DATA = {
+    best: {
+      label: 'Beste runde i ligaen',
+      title: 'Ingimar Stole · GW17 · 104 poeng',
+      picks: [
+        { name:'Haaland', pts:48, captain:true,  bench:false },
+        { name:'Woltemade', pts:13, captain:false, bench:false },
+        { name:'Semenyo',   pts:10, captain:false, bench:false },
+        { name:'Raya',      pts:7,  captain:false, bench:false },
+        { name:'Andersen',  pts:7,  captain:false, bench:false },
+        { name:'J.Timber',  pts:6,  captain:false, bench:false },
+        { name:'Saka',      pts:3,  captain:false, bench:false },
+        { name:'Foden',     pts:3,  captain:false, bench:false },
+        { name:'Senesi',    pts:4,  captain:false, bench:false },
+        { name:'Szoboszlai',pts:1,  captain:false, bench:false },
+        { name:'Thiago',    pts:2,  captain:false, bench:false },
+        { name:'Dúbravka',  pts:0,  captain:false, bench:true  },
+        { name:'Thiaw',     pts:0,  captain:false, bench:true  },
+        { name:'Rodon',     pts:0,  captain:false, bench:true  },
+        { name:'Dewsbury-Hall', pts:0, captain:false, bench:true },
+      ]
+    },
+    worst: {
+      label: 'Verste runde i ligaen',
+      title: 'Vebjørn Øen · GW13 · 21 poeng',
+      picks: [
+        { name:'Mateta',    pts:6,  captain:false, bench:false },
+        { name:'Saka',      pts:5,  captain:false, bench:false },
+        { name:'Haaland',   pts:4,  captain:true,  bench:false },
+        { name:'Roefs',     pts:1,  captain:false, bench:false },
+        { name:'P.Porro',   pts:1,  captain:false, bench:false },
+        { name:'Richards',  pts:1,  captain:false, bench:false },
+        { name:'Mbeumo',    pts:1,  captain:false, bench:false },
+        { name:'Semenyo',   pts:1,  captain:false, bench:false },
+        { name:'João Pedro',pts:1,  captain:false, bench:false },
+        { name:'Van de Ven',pts:0,  captain:false, bench:false },
+        { name:'Guéhi',     pts:0,  captain:false, bench:false },
+        { name:'Dúbravka',  pts:0,  captain:false, bench:true  },
+        { name:'Kudus',     pts:0,  captain:false, bench:true  },
+        { name:'Hannibal',  pts:0,  captain:false, bench:true  },
+        { name:'Estève',    pts:0,  captain:false, bench:true  },
+      ]
+    }
+  };
+
+  window.showGwModal = function(type) {
+    const d = GW_DATA[type];
+    document.getElementById('modalLabel').textContent = d.label;
+    document.getElementById('modalTitle').textContent = d.title;
+    const list = document.getElementById('modalList');
+    list.innerHTML = '';
+    d.picks.forEach(p => {
+      const row = document.createElement('div');
+      row.setAttribute('style',
+        'display:flex;justify-content:space-between;align-items:center;' +
+        'padding:0.55rem 0.8rem;border-radius:10px;' +
+        'background:' + (p.bench ? '#fafafa' : '#f5f5f7') + ';' +
+        'opacity:' + (p.bench ? '0.45' : '1') + ';');
+      const nameSpan = document.createElement('span');
+      nameSpan.setAttribute('style', 'font-size:0.88rem;font-weight:' + (p.bench ? '400' : '600') + ';');
+      nameSpan.textContent = (p.captain ? '(C) ' : '') + p.name + (p.bench ? ' · Benk' : '');
+      const ptsSpan = document.createElement('span');
+      ptsSpan.setAttribute('style',
+        'font-weight:700;font-size:0.95rem;color:' +
+        (p.pts >= 10 ? '#059669' : p.pts <= 2 ? '#dc2626' : '#1d1d1f') + ';');
+      ptsSpan.textContent = p.pts + ' pts';
+      row.appendChild(nameSpan);
+      row.appendChild(ptsSpan);
+      list.appendChild(row);
+    });
+    document.getElementById('gwModal').style.display = 'flex';
+  };
+
+  document.getElementById('gwModal').addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
+  });
   document.getElementById('scRem').textContent=remaining;
   document.getElementById('scRemSub').textContent=`GW${currentGW+1} – GW${totalGW}`;
 
@@ -650,7 +740,7 @@ function render(players, currentGW, remaining, rankHist, totalGW) {
     el.innerHTML=`
       <div class="di-name"><strong>${p.name}</strong><span>${p.team}</span></div>
       <div class="di-track"><div class="di-fill" style="width:${Math.max(p.losePct,0.5).toFixed(2)}%;background:${col}"></div></div>
-      <div class="di-pct" style="color:${col}">${p.losePct.toFixed(1)}%</div>`;
+      <div class="di-pct" style="color:${col}">${p.losePct < 0.5 ? '<span style="background:#d1fae5;color:#059669;padding:0.2rem 0.6rem;border-radius:99px;font-size:0.75rem;font-weight:700;">Trygg</span>' : p.losePct.toFixed(1)+'%'}</div>`;
     dl.appendChild(el);
   });
   document.getElementById('meterNote').textContent=
