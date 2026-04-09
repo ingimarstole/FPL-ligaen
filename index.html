@@ -88,7 +88,7 @@
       display: flex; flex-direction: column;
       align-items: center; justify-content: flex-end;
       text-align: center;
-      padding-bottom: 5rem;
+      padding-bottom: 0.5rem;
     }
     .hero-bg {
       position: absolute; inset: 0;
@@ -341,14 +341,21 @@
 
   <!-- HERO -->
   <div class="hero">
-    <div class="hero-bg"></div>
+    <div class="hero-bg">
+      <video autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 70%;">
+        <source src="egon-hero.mp4" type="video/mp4">
+      </video>
+    </div>
     <div class="hero-content">
       <p class="hero-eyebrow">Premier League Fantasy · Sesong 2025/26</p>
-      <h1>Hvem sitter<br>på <em>Egon?</em></h1>
+      <h1>Hvem sitter på <em>Egon?</em></h1>
       <p class="hero-sub">10 sammenhengende timer. Én taper. Alle vet hvem det blir.</p>
       <div class="hero-cta">
         <a href="#meter" class="btn btn-white">Se Egon-meter</a>
         <a href="#stilling" class="btn btn-outline">Stillingen</a>
+      </div>
+      <div style="background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:0.7rem 1.4rem;display:inline-flex;align-items:center;gap:0.6rem;">
+        <span style="color:rgba(255,255,255,0.75);font-size:0.82rem;font-weight:500;"><strong style="color:#fff;font-size:1.05rem;" id="daysLeft">—</strong> dager igjen</span>
       </div>
       <div class="stat-strip">
         <div class="stat-strip-item">
@@ -503,6 +510,37 @@
         <div class="card-label">Snittpoeng per runde</div>
         <div class="chart-wrap short"><canvas id="avgChart"></canvas></div>
       </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <section>
+    <p class="section-label">For de som er i faresonen</p>
+    <h2 class="section-title">Tips til de som <em>sliter</em></h2>
+    <div class="card" style="max-width:680px;">
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:1rem;">
+        <li style="display:flex;gap:1rem;align-items:flex-start;">
+          <span style="font-size:1.1rem;margin-top:0.1rem;">→</span>
+          <span><strong>Spill differensials.</strong> Med få runder igjen er det ingen poeng å følge flertallet — velg spillere ingen andre har og håp på det beste.</span>
+        </li>
+        <li style="display:flex;gap:1rem;align-items:flex-start;">
+          <span style="font-size:1.1rem;margin-top:0.1rem;">→</span>
+          <span><strong>Bruk benkeboosten.</strong> Hvis du ikke har brukt den ennå — nå er det siste sjansen til å hente noen gratispoeng.</span>
+        </li>
+        <li style="display:flex;gap:1rem;align-items:flex-start;">
+          <span style="font-size:1.1rem;margin-top:0.1rem;">→</span>
+          <span><strong>Velg kaptein med omhu.</strong> En god kapteinsbeslutning kan utgjøre 20+ poeng på én runde. Ta sjansen.</span>
+        </li>
+        <li style="display:flex;gap:1rem;align-items:flex-start;">
+          <span style="font-size:1.1rem;margin-top:0.1rem;">→</span>
+          <span><strong>Prioriter kamper mot bunnlag.</strong> Spillere mot nedrykkstruede lag scorer og assisterer mer enn statistikken tilsier.</span>
+        </li>
+        <li style="display:flex;gap:1rem;align-items:flex-start;padding-top:0.8rem;border-top:1px solid #f0f0f0;">
+          <span style="font-size:1.1rem;margin-top:0.1rem;">→</span>
+          <span style="color:var(--muted);font-style:italic;">Ikke la FPL tære for mye på din mentale helse.</span>
+        </li>
+      </ul>
     </div>
   </section>
 
@@ -675,6 +713,12 @@ function render(players, currentGW, remaining, rankHist, totalGW) {
 }
 
 init();
+
+// Nedtelling til GW38 — 25. mai 2026
+const gw38 = new Date('2026-05-25');
+const today = new Date();
+const daysLeft = Math.ceil((gw38 - today) / (1000 * 60 * 60 * 24));
+document.getElementById('daysLeft').textContent = daysLeft > 0 ? daysLeft : 0;
 </script>
 </body>
 </html>
