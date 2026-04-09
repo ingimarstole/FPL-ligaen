@@ -49,7 +49,7 @@
       animation: spin 0.7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    #loading.hidden { display: none; }
+    #loading.hidden { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
 
     /* ── ERROR ── */
     #error-box {
@@ -60,7 +60,7 @@
     }
     #error-box h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
     #error-box p { color: var(--muted); font-size: 0.88rem; }
-    #app { display: none; }
+    #app { display: none; opacity: 0; transition: opacity 0.4s ease; }
 
     /* ── NAV ── */
     nav {
@@ -418,39 +418,37 @@
     </div>
   </section>
 
-  <hr class="divider" />
-
-  <!-- EGON -->
-  <section id="egon">
-    <p class="section-label">Straffens arena</p>
-    <h2 class="section-title">Egon <em>Stavanger</em></h2>
-    <div class="egon-section">
-      <div class="egon-img">
-        <img src="egon-interior.jpeg" alt="Egon Restaurant Stavanger"
-             onerror="this.parentElement.style.background='#f0ece4';this.style.display='none'" />
-        <div class="egon-img-caption">📍 Strandkaien 2, Stavanger</div>
-      </div>
-      <div class="egon-details">
-        <div>
-          <h2>10 timer.<br><em>Ingen pauser.</em></h2>
-        </div>
-        <p>Taperen i Unge Feminister FPL sitter 10 sammenhengende timer på Egon Stavanger ved sesongslutt i mai 2026. Fra åpning til sent på kveld.</p>
-        <div class="egon-rules-list">
-          <div class="rule-row"><span class="rule-icon">⏰</span> <strong>10 timer</strong> sammenhengende — ingen pauser</div>
-          <div class="rule-row"><span class="rule-icon">📅</span> Avgjøres etter <strong>GW 38</strong>, mai 2026</div>
-          <div class="rule-row"><span class="rule-icon">📍</span> Strandkaien 2, Stavanger sentrum</div>
-        </div>
-        <div class="beer-row">
-          <span class="beer-row-icon">🍺</span>
-          <div>
-            <div class="beer-row-label">Tidlig-deal</div>
-            <div class="beer-row-val">1 øl = −30 minutter</div>
-            <div class="beer-row-sub">Kjøp deg ned i straff</div>
-          </div>
-        </div>
-      </div>
+  <!-- EGON FULLBREDDE -->
+  <div id="egon" style="
+    position:relative;
+    height:92vh; min-height:560px; max-height:900px;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:flex-end;
+    text-align:center;
+    padding-bottom:5rem;
+  ">
+    <img src="egon-guy.jpeg" alt="Egon Stavanger" style="
+      position:absolute; inset:0;
+      width:100%; height:100%; object-fit:cover;
+      object-position:center 30%;
+    " />
+    <div style="
+      position:absolute; inset:0;
+      background:linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.65) 100%);
+    "></div>
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:1rem;">
+      <p style="font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.6);">Straffens arena · Egon Stavanger</p>
+      <h2 style="
+        font-size:clamp(2.8rem,7vw,5.5rem);
+        font-weight:700; letter-spacing:-0.03em; line-height:1;
+        color:#fff;
+      ">10 timer.<br><span style="font-style:italic;font-weight:300;">Ingen pauser.</span></h2>
+      <p style="font-size:clamp(1rem,2vw,1.3rem);color:rgba(255,255,255,0.75);font-weight:400;max-width:480px;">
+        Hver øl kjøper deg en halvtime.
+      </p>
     </div>
-  </section>
+  </div>
 
   <hr class="divider" />
 
@@ -463,6 +461,53 @@
       <p class="meter-note" id="meterNote"></p>
     </div>
   </section>
+
+  <!-- BILDE SKILLE MED TIPS -->
+  <div style="
+    position:relative;
+    height:92vh; min-height:560px; max-height:900px;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:flex-end;
+    text-align:left;
+    padding-bottom:5rem;
+  ">
+    <img src="Vennskap og mat i puben 2.jpeg" alt="Vennskap på Egon" style="
+      position:absolute; inset:0;
+      width:100%; height:100%; object-fit:cover;
+      object-position:center center;
+    " />
+    <div style="
+      position:absolute; inset:0;
+      background:linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.75) 100%);
+    "></div>
+    <div style="position:relative;z-index:1;width:100%;max-width:700px;padding:0 2rem;display:flex;flex-direction:column;gap:1.2rem;">
+      <p style="font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.6);">For de som er i faresonen</p>
+      <h2 style="font-size:clamp(2rem,5vw,3.5rem);font-weight:700;letter-spacing:-0.03em;line-height:1;color:#fff;">Tips til de som <span style="font-style:italic;font-weight:300;">sliter</span></h2>
+      <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.5rem;">
+        <div style="display:flex;gap:1rem;align-items:flex-start;">
+          <span style="color:rgba(255,255,255,0.5);margin-top:0.1rem;">→</span>
+          <span style="color:rgba(255,255,255,0.9);font-size:0.9rem;line-height:1.5;"><strong style="color:#fff;">Spill differensials.</strong> Med få runder igjen er det ingen poeng å følge flertallet — velg spillere ingen andre har.</span>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:flex-start;">
+          <span style="color:rgba(255,255,255,0.5);margin-top:0.1rem;">→</span>
+          <span style="color:rgba(255,255,255,0.9);font-size:0.9rem;line-height:1.5;"><strong style="color:#fff;">Bruk benkeboosten.</strong> Hvis du ikke har brukt den ennå — nå er det siste sjansen til å hente noen gratispoeng.</span>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:flex-start;">
+          <span style="color:rgba(255,255,255,0.5);margin-top:0.1rem;">→</span>
+          <span style="color:rgba(255,255,255,0.9);font-size:0.9rem;line-height:1.5;"><strong style="color:#fff;">Velg kaptein med omhu.</strong> En god kapteinsbeslutning kan utgjøre 20+ poeng på én runde. Ta sjansen.</span>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:flex-start;">
+          <span style="color:rgba(255,255,255,0.5);margin-top:0.1rem;">→</span>
+          <span style="color:rgba(255,255,255,0.9);font-size:0.9rem;line-height:1.5;"><strong style="color:#fff;">Prioriter kamper mot bunnlag.</strong> Spillere mot nedrykkstruede lag scorer og assisterer mer enn statistikken tilsier.</span>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:flex-start;padding-top:0.8rem;border-top:1px solid rgba(255,255,255,0.15);">
+          <span style="color:rgba(255,255,255,0.5);margin-top:0.1rem;">→</span>
+          <span style="color:rgba(255,255,255,0.55);font-size:0.9rem;font-style:italic;">Ikke la FPL tære for mye på din mentale helse.</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <hr class="divider" />
 
@@ -512,37 +557,6 @@
         <div class="card-label">Snittpoeng per runde</div>
         <div class="chart-wrap short"><canvas id="avgChart"></canvas></div>
       </div>
-    </div>
-  </section>
-
-  <hr class="divider" />
-
-  <section>
-    <p class="section-label">For de som er i faresonen</p>
-    <h2 class="section-title">Tips til de som <em>sliter</em></h2>
-    <div class="card" style="max-width:680px;">
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:1rem;">
-        <li style="display:flex;gap:1rem;align-items:flex-start;">
-          <span style="font-size:1.1rem;margin-top:0.1rem;">→</span>
-          <span><strong>Spill differensials.</strong> Med få runder igjen er det ingen poeng å følge flertallet — velg spillere ingen andre har og håp på det beste.</span>
-        </li>
-        <li style="display:flex;gap:1rem;align-items:flex-start;">
-          <span style="font-size:1.1rem;margin-top:0.1rem;">→</span>
-          <span><strong>Bruk benkeboosten.</strong> Hvis du ikke har brukt den ennå — nå er det siste sjansen til å hente noen gratispoeng.</span>
-        </li>
-        <li style="display:flex;gap:1rem;align-items:flex-start;">
-          <span style="font-size:1.1rem;margin-top:0.1rem;">→</span>
-          <span><strong>Velg kaptein med omhu.</strong> En god kapteinsbeslutning kan utgjøre 20+ poeng på én runde. Ta sjansen.</span>
-        </li>
-        <li style="display:flex;gap:1rem;align-items:flex-start;">
-          <span style="font-size:1.1rem;margin-top:0.1rem;">→</span>
-          <span><strong>Prioriter kamper mot bunnlag.</strong> Spillere mot nedrykkstruede lag scorer og assisterer mer enn statistikken tilsier.</span>
-        </li>
-        <li style="display:flex;gap:1rem;align-items:flex-start;padding-top:0.8rem;border-top:1px solid #f0f0f0;">
-          <span style="font-size:1.1rem;margin-top:0.1rem;">→</span>
-          <span style="color:var(--muted);font-style:italic;">Ikke la FPL tære for mye på din mentale helse.</span>
-        </li>
-      </ul>
     </div>
   </section>
 
@@ -610,7 +624,9 @@ async function init() {
 
     render(players, currentGW, remaining, rankHist, totalGW);
     document.getElementById('loading').classList.add('hidden');
-    document.getElementById('app').style.display='block';
+    const app = document.getElementById('app');
+    app.style.display = 'block';
+    requestAnimationFrame(() => requestAnimationFrame(() => app.style.opacity = '1'));
   } catch(err) {
     console.error(err);
     document.getElementById('loading').classList.add('hidden');
