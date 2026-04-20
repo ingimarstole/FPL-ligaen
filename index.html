@@ -9,28 +9,28 @@
   <title>Unge Feminister FPL – Hvem sitter på Egon?</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:      #f5f5f7;
+      --bg:      #f2f2f0;
       --white:   #ffffff;
-      --text:    #1d1d1f;
-      --muted:   #6e6e73;
-      --muted2:  #aeaeb2;
-      --border:  rgba(0,0,0,0.08);
-      --green:   #34c759;
-      --red:     #ff3b30;
-      --orange:  #ff9500;
-      --blue:    #0071e3;
+      --text:    #111110;
+      --muted:   #6b6b67;
+      --muted2:  #b0b0aa;
+      --border:  rgba(0,0,0,0.07);
+      --green:   #22c55e;
+      --red:     #ef4444;
+      --orange:  #f97316;
+      --blue:    #3b82f6;
       --gold:    #c8a840;
     }
     html { scroll-behavior: smooth; }
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 15px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
@@ -39,279 +39,368 @@
     /* ── LOADING ── */
     #loading {
       position: fixed; inset: 0; z-index: 999;
-      background: #fff;
+      background: #111;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 1.2rem;
     }
-    #loading p { font-size: 0.85rem; color: var(--muted); }
+    #loading p { font-size: 0.82rem; color: rgba(255,255,255,0.4); letter-spacing: 0.04em; }
     .spinner {
-      width: 36px; height: 36px;
-      border: 2.5px solid rgba(0,0,0,0.08);
-      border-top-color: var(--text);
+      width: 32px; height: 32px;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-top-color: rgba(255,255,255,0.7);
       border-radius: 50%;
-      animation: spin 0.7s linear infinite;
+      animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    #loading.hidden { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+    #loading.hidden { opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
 
     /* ── ERROR ── */
     #error-box {
-      display: none; max-width: 460px; margin: 6rem auto; padding: 2.5rem;
-      background: #fff; border-radius: 20px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      display: none; max-width: 440px; margin: 6rem auto; padding: 2.5rem;
+      background: var(--white); border-radius: 20px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.08);
       text-align: center;
     }
-    #error-box h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
-    #error-box p { color: var(--muted); font-size: 0.88rem; }
-    #app { display: none; opacity: 0; transition: opacity 0.4s ease; }
+    #error-box h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+    #error-box p { color: var(--muted); font-size: 0.85rem; }
+    #app { display: none; opacity: 0; transition: opacity 0.5s ease; }
 
     /* ── NAV ── */
     nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,0.85);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2.5rem;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease;
+    }
+    nav.scrolled {
+      background: rgba(242,242,240,0.88);
       backdrop-filter: saturate(180%) blur(20px);
       -webkit-backdrop-filter: saturate(180%) blur(20px);
       border-bottom: 1px solid var(--border);
-      height: 52px;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2.5rem;
     }
-    .nav-logo { font-size: 0.88rem; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+    .nav-logo { font-size: 0.82rem; font-weight: 700; color: #fff; letter-spacing: 0.01em; transition: color 0.3s; }
+    nav.scrolled .nav-logo { color: var(--text); }
     .nav-links { display: flex; gap: 2rem; }
-    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.82rem; font-weight: 500; transition: color 0.15s; }
-    .nav-links a:hover { color: var(--text); }
-    .nav-gw { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+    .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.8rem; font-weight: 500; transition: color 0.15s; }
+    nav.scrolled .nav-links a { color: var(--muted); }
+    .nav-links a:hover { color: #fff; }
+    nav.scrolled .nav-links a:hover { color: var(--text); }
+    .nav-gw { font-size: 0.75rem; color: rgba(255,255,255,0.5); font-weight: 500; transition: color 0.3s; }
+    nav.scrolled .nav-gw { color: var(--muted); }
     @media (max-width: 700px) { .nav-links { display: none; } }
 
     /* ── HERO ── */
     .hero {
       position: relative;
-      height: 92vh; min-height: 560px; max-height: 900px;
+      height: 100vh; min-height: 600px;
       overflow: hidden;
       display: flex; flex-direction: column;
       align-items: center; justify-content: flex-end;
       text-align: center;
-      padding-bottom: 0.5rem;
     }
-    .hero-bg {
+    .hero video {
       position: absolute; inset: 0;
-      background: url('egon-interior.jpeg') center/cover no-repeat;
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: center 70%;
     }
-    .hero-bg::after {
-      content: '';
+    .hero-overlay {
       position: absolute; inset: 0;
       background: linear-gradient(
         to bottom,
-        rgba(0,0,0,0.10) 0%,
-        rgba(0,0,0,0.05) 40%,
-        rgba(0,0,0,0.60) 100%
+        rgba(0,0,0,0.15) 0%,
+        rgba(0,0,0,0.0) 35%,
+        rgba(0,0,0,0.55) 80%,
+        rgba(17,17,16,1) 100%
       );
     }
     .hero-content {
       position: relative; z-index: 1;
-      display: flex; flex-direction: column; align-items: center; gap: 1rem;
+      padding: 0 1.5rem 4rem;
+      display: flex; flex-direction: column; align-items: center; gap: 1.1rem;
+      width: 100%;
     }
     .hero-eyebrow {
-      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
-      text-transform: uppercase; color: rgba(255,255,255,0.7);
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.5);
     }
     .hero h1 {
-      font-size: clamp(2.8rem, 7vw, 5.5rem);
-      font-weight: 700; letter-spacing: -0.03em; line-height: 1;
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 700; letter-spacing: -0.035em; line-height: 0.95;
       color: #fff;
     }
     .hero h1 em { font-style: italic; font-weight: 300; }
-    .hero-sub { font-size: clamp(0.95rem, 2vw, 1.2rem); color: rgba(255,255,255,0.75); font-weight: 400; max-width: 480px; line-height: 1.5; }
+    .hero-sub {
+      font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+      color: rgba(255,255,255,0.55);
+      font-weight: 400; max-width: 420px;
+      letter-spacing: 0.01em;
+    }
     .hero-cta {
-      display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center;
-      margin-top: 0.5rem;
+      display: flex; gap: 0.7rem; flex-wrap: wrap; justify-content: center;
+      margin-top: 0.2rem;
     }
     .btn {
-      padding: 0.65rem 1.5rem; border-radius: 99px;
-      font-size: 0.88rem; font-weight: 600; text-decoration: none;
+      padding: 0.6rem 1.4rem; border-radius: 99px;
+      font-size: 0.82rem; font-weight: 600; text-decoration: none;
       transition: all 0.2s; cursor: pointer; border: none; display: inline-block;
+      letter-spacing: 0.01em;
     }
-    .btn-white { background: #fff; color: var(--text); }
-    .btn-white:hover { background: rgba(255,255,255,0.85); }
-    .btn-outline { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.4); backdrop-filter: blur(8px); }
-    .btn-outline:hover { background: rgba(255,255,255,0.25); }
+    .btn-white { background: #fff; color: #111; }
+    .btn-white:hover { background: rgba(255,255,255,0.88); }
+    .btn-ghost { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.25); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.18); }
 
-    /* ── HERO STATS STRIP ── */
-    .stat-strip {
-      background: rgba(255,255,255,0.12);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 16px;
-      padding: 1rem 2rem;
-      display: flex; gap: 3rem;
-      margin-top: 1rem;
+    /* hero pill */
+    .hero-pill {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 99px;
+      padding: 0.45rem 1.2rem;
+      font-size: 0.8rem; color: rgba(255,255,255,0.65);
+      display: inline-flex; align-items: center; gap: 0.5rem;
     }
-    .stat-strip-item { text-align: center; }
-    .ss-val { font-size: 1.5rem; font-weight: 700; color: #fff; line-height: 1; }
-    .ss-lbl { font-size: 0.68rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.2rem; }
-    @media (max-width: 500px) { .stat-strip { gap: 1.5rem; padding: 0.8rem 1.2rem; } }
+    .hero-pill strong { color: #fff; }
 
-    /* ── SECTION ── */
-    section {
-      max-width: 980px; margin: 0 auto;
-      padding: 4rem 1.5rem;
+    /* hero stat strip */
+    .hero-stats {
+      display: flex; gap: 0; width: 100%; max-width: 520px;
+      border-radius: 16px; overflow: hidden;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(16px);
+    }
+    .hs-item {
+      flex: 1; text-align: center;
+      padding: 0.9rem 0.5rem;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .hs-item:last-child { border-right: none; }
+    .hs-val { font-size: 1.35rem; font-weight: 700; color: #fff; line-height: 1; }
+    .hs-lbl { font-size: 0.62rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.25rem; }
+    @media (max-width: 480px) { .hero-stats { max-width: 100%; } .hs-val { font-size: 1.1rem; } }
+
+    /* ── LIGHT SECTIONS ── */
+    .section-wrap {
+      background: var(--bg);
+      padding: 5rem 1.5rem;
+    }
+    .section-inner {
+      max-width: 960px; margin: 0 auto;
     }
     .section-label {
-      font-size: 0.72rem; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--muted); margin-bottom: 0.5rem;
+      font-size: 0.68rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--muted2); margin-bottom: 0.6rem;
     }
     .section-title {
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
-      font-weight: 700; letter-spacing: -0.025em; line-height: 1.1;
-      margin-bottom: 2rem;
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      font-weight: 700; letter-spacing: -0.03em; line-height: 1.05;
+      margin-bottom: 2.5rem;
     }
-    .section-title em { font-style: italic; font-weight: 300; }
-    hr.divider {
-      border: none; border-top: 1px solid var(--border);
-      max-width: 980px; margin: 0 auto;
-    }
+    .section-title em { font-style: italic; font-weight: 300; color: var(--muted); }
 
-    /* ── CARDS ── */
-    .card {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 1.8rem;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    /* ── GW PROGRESS ── */
+    .gw-bar-wrap { margin-bottom: 2.8rem; }
+    .gw-bar-labels {
+      display: flex; justify-content: space-between;
+      font-size: 0.7rem; color: var(--muted2); margin-bottom: 0.5rem;
+      letter-spacing: 0.02em;
     }
-    .card-label {
-      font-size: 0.68rem; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--muted); margin-bottom: 1.2rem;
-    }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
-    .grid-4 { display: grid; grid-template-columns: repeat(5,1fr); gap: 1rem; }
-    @media (max-width: 860px) {
-      .grid-2 { grid-template-columns: 1fr; }
-      .grid-4 { grid-template-columns: repeat(2,1fr); }
-    }
+    .gw-bar-track { height: 3px; background: rgba(0,0,0,0.08); border-radius: 99px; overflow: hidden; }
+    .gw-bar-fill { height: 100%; background: var(--text); border-radius: 99px; transition: width 1s ease; }
 
     /* ── SUMMARY CARDS ── */
-    .summary-card { background: var(--white); border-radius: 18px; padding: 1.4rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .sc-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.6rem; }
-    .sc-val { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
-    .sc-sub { font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; }
-
-    /* ── EGON INFO SECTION ── */
-    .egon-section {
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 860px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .summary-grid { grid-template-columns: 1fr 1fr; } }
+    .sc {
       background: var(--white);
-      border-radius: 24px;
+      border-radius: 16px;
+      padding: 1.4rem 1.2rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 16px rgba(0,0,0,0.04);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .sc:hover { transform: translateY(-2px); box-shadow: 0 2px 8px rgba(0,0,0,0.07), 0 8px 24px rgba(0,0,0,0.06); }
+    .sc.clickable { cursor: pointer; }
+    .sc-label { font-size: 0.64rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted2); margin-bottom: 0.7rem; }
+    .sc-val { font-size: 1.45rem; font-weight: 700; letter-spacing: -0.025em; line-height: 1; }
+    .sc-sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.45rem; }
+    .sc-hint { font-size: 0.63rem; color: var(--muted2); margin-top: 0.5rem; }
+
+    /* ── FULL BLEED CINEMATIC SECTIONS ── */
+    .cinematic {
+      position: relative;
+      height: 95vh; min-height: 560px;
       overflow: hidden;
-      display: grid; grid-template-columns: 1fr 1fr;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      text-align: center;
     }
-    @media (max-width: 700px) { .egon-section { grid-template-columns: 1fr; } }
-    .egon-img { position: relative; min-height: 300px; overflow: hidden; }
-    .egon-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s ease; }
-    .egon-img:hover img { transform: scale(1.03); }
-    .egon-img-caption {
-      position: absolute; bottom: 1rem; left: 1rem;
-      background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
-      color: rgba(255,255,255,0.85); font-size: 0.72rem; font-weight: 500;
-      padding: 0.35rem 0.8rem; border-radius: 8px;
+    .cinematic video, .cinematic img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
     }
-    .egon-details { padding: 2.5rem; display: flex; flex-direction: column; gap: 1.4rem; justify-content: center; }
-    .egon-details h2 { font-size: 2rem; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; }
-    .egon-details h2 em { font-style: italic; font-weight: 300; color: var(--muted); }
-    .egon-details p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
-    .egon-rules-list { display: flex; flex-direction: column; gap: 0.6rem; }
-    .rule-row {
-      display: flex; align-items: center; gap: 0.8rem;
-      font-size: 0.85rem; padding: 0.7rem 1rem;
-      background: var(--bg); border-radius: 12px;
+    /* Gradient bridges — top fades IN from bg, bottom fades OUT to bg */
+    .cinematic .bridge-top {
+      position: absolute; top: 0; left: 0; right: 0; height: 220px; z-index: 1;
+      background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
+      pointer-events: none;
     }
-    .rule-icon { font-size: 1rem; }
-    .beer-row {
-      display: flex; align-items: center; gap: 1rem;
-      padding: 1rem 1.2rem;
-      background: #fff8ec;
-      border: 1px solid #fde9c0;
-      border-radius: 14px;
+    .cinematic .bridge-bottom {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 320px; z-index: 1;
+      background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+      pointer-events: none;
     }
-    .beer-row-icon { font-size: 1.6rem; }
-    .beer-row-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--orange); }
-    .beer-row-val { font-size: 0.95rem; font-weight: 700; color: var(--text); }
-    .beer-row-sub { font-size: 0.72rem; color: var(--muted); }
+    .cinematic .overlay {
+      position: absolute; inset: 0; z-index: 0;
+    }
+    .cinematic .cin-content {
+      position: relative; z-index: 2;
+      padding: 0 1.5rem 5rem;
+      width: 100%;
+      display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    }
+    /* For left-aligned (tips) */
+    .cinematic.left .cin-content {
+      align-items: flex-start;
+      max-width: 780px;
+      margin: 0 auto;
+    }
 
-    /* ── EGON METER ── */
-    .danger-list { display: flex; flex-direction: column; gap: 0.8rem; }
+    /* ── CINEMATIC: LAPTOP (10 timer) ── */
+    .cin-eyebrow {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.45);
+    }
+    .cin-h2 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 700; letter-spacing: -0.035em; line-height: 0.95;
+      color: #fff;
+    }
+    .cin-h2 em { font-style: italic; font-weight: 300; opacity: 0.75; }
+    .cin-sub {
+      font-size: clamp(0.9rem, 2vw, 1.15rem);
+      color: rgba(255,255,255,0.55);
+      max-width: 400px;
+    }
+
+    /* ── METER ── */
+    .meter-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 2rem 2rem 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 8px 32px rgba(0,0,0,0.05);
+    }
+    .danger-list { display: flex; flex-direction: column; gap: 1rem; }
     .danger-item {
-      display: grid; grid-template-columns: 180px 1fr 64px;
-      align-items: center; gap: 1.2rem;
+      display: grid;
+      grid-template-columns: 160px 1fr 72px;
+      align-items: center; gap: 1.4rem;
     }
-    @media (max-width: 600px) { .danger-item { grid-template-columns: 110px 1fr 52px; gap: 0.6rem; } }
+    @media (max-width: 600px) { .danger-item { grid-template-columns: 100px 1fr 56px; gap: 0.7rem; } }
     .di-name { text-align: right; }
-    .di-name strong { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text); }
-    .di-name span { font-size: 0.7rem; color: var(--muted); }
-    .di-track {
-      height: 8px; background: #f0f0f0;
-      border-radius: 99px; overflow: hidden;
-    }
-    .di-fill { height: 100%; border-radius: 99px; min-width: 3px; }
-    .di-pct { font-size: 0.9rem; font-weight: 700; }
-    .meter-note { margin-top: 1.2rem; font-size: 0.72rem; color: var(--muted2); text-align: center; }
+    .di-name strong { display: block; font-size: 0.83rem; font-weight: 600; }
+    .di-name span { font-size: 0.68rem; color: var(--muted2); }
+    .di-track { height: 5px; background: rgba(0,0,0,0.06); border-radius: 99px; overflow: hidden; }
+    .di-fill { height: 100%; border-radius: 99px; min-width: 3px; transition: width 1.2s ease; }
+    .di-pct { font-size: 0.88rem; font-weight: 700; }
+    .meter-note { margin-top: 1.8rem; font-size: 0.68rem; color: var(--muted2); text-align: center; letter-spacing: 0.02em; }
 
-    /* ── PROGRESS BAR ── */
-    .gw-bar-wrap { margin-bottom: 2rem; }
-    .gw-bar-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); margin-bottom: 0.4rem; }
-    .gw-bar-track { height: 6px; background: #e5e5ea; border-radius: 99px; overflow: hidden; }
-    .gw-bar-fill { height: 100%; background: var(--text); border-radius: 99px; }
+    /* ── TIPS ── */
+    .tips-list { display: flex; flex-direction: column; gap: 1rem; }
+    .tip-row { display: flex; gap: 1rem; align-items: flex-start; }
+    .tip-arrow { color: rgba(255,255,255,0.3); font-size: 0.8rem; margin-top: 0.2rem; flex-shrink: 0; }
+    .tip-text { color: rgba(255,255,255,0.85); font-size: 0.88rem; line-height: 1.6; }
+    .tip-text strong { color: #fff; }
+    .tip-divider { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 0.5rem 0; }
+    .tip-muted { color: rgba(255,255,255,0.4); font-style: italic; font-size: 0.85rem; }
 
-    /* ── TABLE ── */
+    /* ── STANDINGS ── */
     .standings-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 600px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 580px; }
     thead th {
-      padding: 0.5rem 1rem; border-bottom: 1px solid #e5e5ea;
-      font-size: 0.67rem; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.08em;
-      color: var(--muted); text-align: left;
+      padding: 0.5rem 1rem; border-bottom: 1px solid var(--border);
+      font-size: 0.63rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--muted2); text-align: left;
     }
     thead th.r { text-align: right; }
-    tbody td { padding: 0.9rem 1rem; border-bottom: 1px solid #f2f2f2; vertical-align: middle; }
+    tbody td { padding: 0.95rem 1rem; border-bottom: 1px solid rgba(0,0,0,0.04); vertical-align: middle; }
     tbody tr:last-child td { border-bottom: none; }
-    tbody tr:hover td { background: #fafafa; }
+    tbody tr:hover td { background: rgba(0,0,0,0.018); }
     .rank-num {
-      width: 28px; height: 28px; border-radius: 8px;
+      width: 26px; height: 26px; border-radius: 7px;
       display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 0.82rem;
-      background: #f5f5f7; color: var(--muted);
+      font-weight: 700; font-size: 0.78rem;
+      background: rgba(0,0,0,0.05); color: var(--muted);
     }
     .rank-num.p1 { background: #fdf4d6; color: var(--gold); }
     .rank-num.p2 { background: #f2f2f2; color: #888; }
     .rank-num.p3 { background: #fdf0e8; color: #c0784a; }
     .rank-num.last { background: #fff1f0; color: var(--red); }
-    .pn-main { font-weight: 600; font-size: 0.88rem; }
-    .pn-sub { font-size: 0.72rem; color: var(--muted); }
+    .pn-main { font-weight: 600; font-size: 0.86rem; }
+    .pn-sub { font-size: 0.7rem; color: var(--muted2); }
     .pts-main { font-weight: 700; }
-    .pts-gw { font-size: 0.78rem; color: var(--muted); }
-    .trend-up { color: var(--green); font-weight: 700; font-size: 0.8rem; }
-    .trend-dn { color: var(--red); font-weight: 700; font-size: 0.8rem; }
-    .trend-eq { color: var(--muted2); font-size: 0.8rem; }
+    .pts-gw { font-size: 0.76rem; color: var(--muted); }
+    .trend-up { color: var(--green); font-weight: 700; font-size: 0.78rem; }
+    .trend-dn { color: var(--red); font-weight: 700; font-size: 0.78rem; }
+    .trend-eq { color: var(--muted2); font-size: 0.78rem; }
     .form-pips { display: inline-flex; gap: 3px; }
-    .pip { width: 8px; height: 8px; border-radius: 2px; }
+    .pip { width: 7px; height: 7px; border-radius: 2px; }
     .pip.hi { background: var(--green); }
     .pip.md { background: var(--orange); }
     .pip.lo { background: var(--red); }
     .risk-tag {
-      display: inline-block; padding: 0.18rem 0.65rem;
-      border-radius: 99px; font-size: 0.72rem; font-weight: 600;
+      display: inline-block; padding: 0.15rem 0.6rem;
+      border-radius: 99px; font-size: 0.7rem; font-weight: 600;
     }
 
     /* ── CHARTS ── */
-    .chart-wrap { position: relative; height: 340px; }
-    .chart-wrap.short { height: 260px; }
+    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 700px) { .chart-grid { grid-template-columns: 1fr; } }
+    .chart-card {
+      background: var(--white); border-radius: 16px; padding: 1.6rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 16px rgba(0,0,0,0.04);
+    }
+    .chart-label { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted2); margin-bottom: 1.2rem; }
+    .chart-wrap { position: relative; height: 300px; }
+    .chart-wrap.short { height: 240px; }
 
     /* ── FOOTER ── */
     footer {
       text-align: center; padding: 3rem 1.5rem;
-      color: var(--muted); font-size: 0.75rem; line-height: 2;
-      border-top: 1px solid var(--border);
+      color: var(--muted2); font-size: 0.7rem; line-height: 2.2;
+      letter-spacing: 0.03em;
     }
+
+    /* ── MODAL ── */
+    #gwModal {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+      align-items: center; justify-content: center;
+    }
+    .modal-inner {
+      background: var(--white); border-radius: 24px; padding: 2rem;
+      width: 90%; max-width: 460px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: rgba(0,0,0,0.06); border: none; border-radius: 99px;
+      width: 30px; height: 30px; font-size: 0.85rem; cursor: pointer;
+      color: var(--muted); display: flex; align-items: center; justify-content: center;
+    }
+    .modal-close:hover { background: rgba(0,0,0,0.1); }
+    #modalLabel { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted2); margin-bottom: 0.3rem; }
+    #modalTitle { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
+    #modalList { display: flex; flex-direction: column; gap: 0.5rem; }
   </style>
 </head>
 <body>
@@ -325,16 +414,17 @@
 <!-- ERROR -->
 <div id="error-box">
   <h3>Kunne ikke laste data</h3>
-  <p>Prøv å laste siden på nytt. Hvis problemet vedvarer, sjekk at data.json er lastet opp til GitHub.</p>
+  <p>Sjekk at data.json er lastet opp til GitHub og prøv igjen.</p>
 </div>
 
 <!-- APP -->
 <div id="app">
 
-  <nav>
+  <!-- NAV -->
+  <nav id="mainNav">
     <span class="nav-logo">Unge Feminister FPL</span>
     <div class="nav-links">
-      <a href="#egon">Om Egon</a>
+      <a href="#egon">10 timer</a>
       <a href="#meter">Egon-meter</a>
       <a href="#stilling">Stilling</a>
       <a href="#statistikk">Statistikk</a>
@@ -344,232 +434,196 @@
 
   <!-- HERO -->
   <div class="hero">
-    <div class="hero-bg">
-      <video autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 70%;">
-        <source src="egon-hero.mp4" type="video/mp4">
-      </video>
-    </div>
+    <video autoplay muted loop playsinline>
+      <source src="egon-hero.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <!-- bottom bridge into bg -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:160px;z-index:1;background:linear-gradient(to top,var(--bg) 0%,transparent 100%);pointer-events:none;"></div>
     <div class="hero-content">
       <p class="hero-eyebrow">Premier League Fantasy · Sesong 2025/26</p>
       <h1>Hvem ender på <em>Egon?</em></h1>
       <p class="hero-sub">10 sammenhengende timer. Én taper. Alle vet hvem det blir.</p>
       <div class="hero-cta">
         <a href="#meter" class="btn btn-white">Se Egon-meter</a>
-        <a href="#stilling" class="btn btn-outline">Stillingen</a>
+        <a href="#stilling" class="btn btn-ghost">Stillingen</a>
       </div>
-      <div style="background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:0.7rem 1.4rem;display:inline-flex;align-items:center;gap:0.6rem;">
-        <span style="color:rgba(255,255,255,0.75);font-size:0.82rem;font-weight:500;"><strong style="color:#fff;font-size:1.05rem;" id="daysLeft">—</strong> dager igjen</span>
+      <div class="hero-pill">
+        <strong id="daysLeft">—</strong> dager igjen av sesongen
       </div>
-      <div class="stat-strip">
-        <div class="stat-strip-item">
-          <div class="ss-val" id="heroLeader">—</div>
-          <div class="ss-lbl">Leder</div>
+      <div class="hero-stats">
+        <div class="hs-item">
+          <div class="hs-val" id="heroLeader">—</div>
+          <div class="hs-lbl">Leder</div>
         </div>
-        <div class="stat-strip-item">
-          <div class="ss-val" id="heroLast">—</div>
-          <div class="ss-lbl">Siste plass</div>
+        <div class="hs-item">
+          <div class="hs-val" id="heroLast">—</div>
+          <div class="hs-lbl">Siste plass</div>
         </div>
-        <div class="stat-strip-item">
-          <div class="ss-val" id="heroDiff">—</div>
-          <div class="ss-lbl">Differanse</div>
+        <div class="hs-item">
+          <div class="hs-val" id="heroDiff">—</div>
+          <div class="hs-lbl">Diff</div>
         </div>
-        <div class="stat-strip-item">
-          <div class="ss-val" id="heroGw">—</div>
-          <div class="ss-lbl">Runder igjen</div>
+        <div class="hs-item">
+          <div class="hs-val" id="heroGw">—</div>
+          <div class="hs-lbl">Runder igjen</div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- SUMMARY -->
-  <section>
-    <div class="gw-bar-wrap">
-      <div class="gw-bar-labels">
-        <span id="gwBarLabel">Sesongprogresjon</span>
-        <span id="gwBarRight">—</span>
+  <div class="section-wrap" style="padding-top:3rem;">
+    <div class="section-inner">
+      <div class="gw-bar-wrap">
+        <div class="gw-bar-labels">
+          <span id="gwBarLabel">Sesongprogresjon</span>
+          <span id="gwBarRight">—</span>
+        </div>
+        <div class="gw-bar-track"><div class="gw-bar-fill" id="gwBarFill" style="width:0%"></div></div>
       </div>
-      <div class="gw-bar-track"><div class="gw-bar-fill" id="gwBarFill"></div></div>
-    </div>
-    <div class="grid-4">
-      <div class="summary-card">
-        <div class="sc-label">Leder</div>
-        <div class="sc-val" id="scLeader">—</div>
-        <div class="sc-sub" id="scLeaderSub">—</div>
+      <div class="summary-grid">
+        <div class="sc">
+          <div class="sc-label">Leder</div>
+          <div class="sc-val" id="scLeader">—</div>
+          <div class="sc-sub" id="scLeaderSub">—</div>
+        </div>
+        <div class="sc">
+          <div class="sc-label">Siste plass</div>
+          <div class="sc-val" style="color:var(--red)" id="scLast">—</div>
+          <div class="sc-sub" id="scLastSub">—</div>
+        </div>
+        <div class="sc clickable" onclick="showGwModal('best')">
+          <div class="sc-label">Beste GW</div>
+          <div class="sc-val" id="scBest">—</div>
+          <div class="sc-sub" id="scBestSub">—</div>
+          <div class="sc-hint">Trykk for detaljer →</div>
+        </div>
+        <div class="sc clickable" onclick="showGwModal('worst')">
+          <div class="sc-label">Verste GW 💀</div>
+          <div class="sc-val" style="color:var(--red)" id="scWorst">—</div>
+          <div class="sc-sub" id="scWorstSub">—</div>
+          <div class="sc-hint">Trykk for detaljer →</div>
+        </div>
+        <div class="sc">
+          <div class="sc-label">Runder igjen</div>
+          <div class="sc-val" id="scRem">—</div>
+          <div class="sc-sub" id="scRemSub">—</div>
+        </div>
       </div>
-      <div class="summary-card">
-        <div class="sc-label">Siste plass</div>
-        <div class="sc-val" style="color:var(--red)" id="scLast">—</div>
-        <div class="sc-sub" id="scLastSub">—</div>
-      </div>
-      <div class="summary-card gw-clickable" id="cardBest" style="cursor:pointer;" onclick="showGwModal('best')" title="Klikk for å se runden">
-        <div class="sc-label">Beste GW</div>
-        <div class="sc-val" id="scBest">—</div>
-        <div class="sc-sub" id="scBestSub">—</div>
-        <div style="font-size:0.68rem;color:var(--muted2);margin-top:0.6rem;">Trykk for detaljer →</div>
-      </div>
-      <div class="summary-card gw-clickable" id="cardWorst" style="cursor:pointer;" onclick="showGwModal('worst')" title="Klikk for å se runden">
-        <div class="sc-label">Verste GW 💀</div>
-        <div class="sc-val" style="color:var(--red)" id="scWorst">—</div>
-        <div class="sc-sub" id="scWorstSub">—</div>
-        <div style="font-size:0.68rem;color:var(--muted2);margin-top:0.6rem;">Trykk for detaljer →</div>
-      </div>
-      <div class="summary-card">
-        <div class="sc-label">Runder igjen</div>
-        <div class="sc-val" id="scRem">—</div>
-        <div class="sc-sub" id="scRemSub">—</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- EGON FULLBREDDE -->
-  <div id="egon" style="
-    position:relative;
-    height:92vh; min-height:560px; max-height:900px;
-    overflow:hidden;
-    display:flex; flex-direction:column;
-    align-items:center; justify-content:flex-end;
-    text-align:center;
-    padding-bottom:5rem;
-  ">
-    <img src="egon-guy.jpeg" alt="Egon Stavanger" style="
-      position:absolute; inset:0;
-      width:100%; height:100%; object-fit:cover;
-      object-position:center 30%;
-    " />
-    <div style="
-      position:absolute; inset:0;
-      background:linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.65) 100%);
-    "></div>
-    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:1rem;">
-      <p style="font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.6);">Straffens arena · Egon Stavanger</p>
-      <h2 style="
-        font-size:clamp(2.8rem,7vw,5.5rem);
-        font-weight:700; letter-spacing:-0.03em; line-height:1;
-        color:#fff;
-      ">10 timer.<br><span style="font-style:italic;font-weight:300;">Ingen pauser.</span></h2>
-      <p style="font-size:clamp(1rem,2vw,1.3rem);color:rgba(255,255,255,0.75);font-weight:400;max-width:480px;">
-        Hver øl kjøper deg en halvtime.
-      </p>
     </div>
   </div>
 
-  <hr class="divider" />
+  <!-- CINEMATIC: EGON LAPTOP -->
+  <div class="cinematic" id="egon">
+    <video autoplay muted loop playsinline>
+      <source src="egon-laptop.mp4" type="video/mp4">
+    </video>
+    <div class="overlay" style="background:linear-gradient(to bottom,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.55) 80%,var(--bg) 100%);"></div>
+    <div class="bridge-top"></div>
+    <div class="cin-content">
+      <p class="cin-eyebrow">Straffens arena · Egon Stavanger</p>
+      <h2 class="cin-h2">10 timer.<br><em>Ingen pauser.</em></h2>
+      <p class="cin-sub">Hver øl kjøper deg en halvtime.</p>
+    </div>
+  </div>
 
   <!-- METER -->
-  <section id="meter">
-    <p class="section-label">Monte Carlo-simulering · 100 000 scenarioer</p>
-    <h2 class="section-title">Hvem <em>taper?</em></h2>
-    <div class="card">
-      <div class="danger-list" id="dangerList"></div>
-      <p class="meter-note" id="meterNote"></p>
+  <div class="section-wrap" id="meter" style="padding-top:4rem;">
+    <div class="section-inner">
+      <p class="section-label">Monte Carlo-simulering · 100 000 scenarioer</p>
+      <h2 class="section-title">Hvem <em>taper?</em></h2>
+      <div class="meter-card">
+        <div class="danger-list" id="dangerList"></div>
+        <p class="meter-note" id="meterNote"></p>
+      </div>
     </div>
-  </section>
+  </div>
 
-  <!-- BILDE SKILLE MED TIPS -->
-  <div style="
-    position:relative;
-    height:92vh; min-height:560px; max-height:900px;
-    overflow:hidden;
-    display:flex; flex-direction:column;
-    align-items:center; justify-content:flex-end;
-    text-align:left;
-    padding-bottom:5rem;
-  ">
-    <img src="Vennskap og mat i puben 2.jpeg" alt="Vennskap på Egon" style="
-      position:absolute; inset:0;
-      width:100%; height:100%; object-fit:cover;
-      object-position:center center;
-    " />
-    <div style="
-      position:absolute; inset:0;
-      background:linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.75) 100%);
-    "></div>
-    <div style="position:relative;z-index:1;width:100%;max-width:700px;padding:0 2rem;display:flex;flex-direction:column;gap:1.2rem;">
-      <p style="font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.6);">For de som er i faresonen</p>
-      <h2 style="font-size:clamp(2rem,5vw,3.5rem);font-weight:700;letter-spacing:-0.03em;line-height:1;color:#fff;">Tips til de som <span style="font-style:italic;font-weight:300;">sliter</span></h2>
-      <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.5rem;">
-        <div style="display:flex;gap:1rem;align-items:flex-start;">
-          <span style="color:rgba(255,255,255,0.5);margin-top:0.1rem;">→</span>
-          <span style="color:rgba(255,255,255,0.9);font-size:0.9rem;line-height:1.5;"><strong style="color:#fff;">Spill differensials.</strong> Med få runder igjen er det ingen poeng å følge flertallet — velg spillere ingen andre har.</span>
+  <!-- CINEMATIC: TIPS -->
+  <div class="cinematic left">
+    <video autoplay muted loop playsinline>
+      <source src="egon-tips.mp4" type="video/mp4">
+    </video>
+    <div class="overlay" style="background:linear-gradient(to bottom,var(--bg) 0%,rgba(0,0,0,0.15) 20%,rgba(0,0,0,0.65) 70%,var(--bg) 100%);"></div>
+    <div class="bridge-top"></div>
+    <div class="cin-content" style="padding-bottom:14rem;">
+      <p class="cin-eyebrow">For de som er i faresonen</p>
+      <h2 class="cin-h2" style="font-size:clamp(2rem,5vw,3.5rem);">Tips til de som <em>sliter</em></h2>
+      <div class="tips-list" style="margin-top:0.5rem;">
+        <div class="tip-row">
+          <span class="tip-arrow">→</span>
+          <span class="tip-text"><strong>Spill differensials.</strong> Med få runder igjen er det ingen poeng å følge flertallet — velg spillere ingen andre har.</span>
         </div>
-        <div style="display:flex;gap:1rem;align-items:flex-start;">
-          <span style="color:rgba(255,255,255,0.5);margin-top:0.1rem;">→</span>
-          <span style="color:rgba(255,255,255,0.9);font-size:0.9rem;line-height:1.5;"><strong style="color:#fff;">Bruk benkeboosten.</strong> Hvis du ikke har brukt den ennå — nå er det siste sjansen til å hente noen gratispoeng.</span>
+        <div class="tip-row">
+          <span class="tip-arrow">→</span>
+          <span class="tip-text"><strong>Bruk benkeboosten.</strong> Hvis du ikke har brukt den ennå — nå er det siste sjansen til å hente noen gratispoeng.</span>
         </div>
-        <div style="display:flex;gap:1rem;align-items:flex-start;">
-          <span style="color:rgba(255,255,255,0.5);margin-top:0.1rem;">→</span>
-          <span style="color:rgba(255,255,255,0.9);font-size:0.9rem;line-height:1.5;"><strong style="color:#fff;">Velg kaptein med omhu.</strong> En god kapteinsbeslutning kan utgjøre 20+ poeng på én runde. Ta sjansen.</span>
+        <div class="tip-row">
+          <span class="tip-arrow">→</span>
+          <span class="tip-text"><strong>Velg kaptein med omhu.</strong> En god kapteinsbeslutning kan utgjøre 20+ poeng på én runde. Ta sjansen.</span>
         </div>
-        <div style="display:flex;gap:1rem;align-items:flex-start;">
-          <span style="color:rgba(255,255,255,0.5);margin-top:0.1rem;">→</span>
-          <span style="color:rgba(255,255,255,0.9);font-size:0.9rem;line-height:1.5;"><strong style="color:#fff;">Prioriter kamper mot bunnlag.</strong> Spillere mot nedrykkstruede lag scorer og assisterer mer enn statistikken tilsier.</span>
+        <div class="tip-row">
+          <span class="tip-arrow">→</span>
+          <span class="tip-text"><strong>Prioriter kamper mot bunnlag.</strong> Spillere mot nedrykkstruede lag scorer og assisterer mer enn statistikken tilsier.</span>
         </div>
-        <div style="display:flex;gap:1rem;align-items:flex-start;padding-top:0.8rem;border-top:1px solid rgba(255,255,255,0.15);">
-          <span style="color:rgba(255,255,255,0.5);margin-top:0.1rem;">→</span>
-          <span style="color:rgba(255,255,255,0.55);font-size:0.9rem;font-style:italic;">Ikke la FPL tære for mye på din mentale helse.</span>
+        <hr class="tip-divider" style="width:100%;">
+        <div class="tip-row">
+          <span class="tip-arrow">→</span>
+          <span class="tip-muted">Ikke la FPL tære for mye på din mentale helse.</span>
         </div>
       </div>
     </div>
   </div>
 
-  <hr class="divider" />
-
   <!-- STANDINGS -->
-  <section id="stilling">
-    <p class="section-label">Ligastilling</p>
-    <h2 class="section-title">Stillingen</h2>
-    <div class="card">
-      <div class="standings-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th><th>Spiller</th>
-              <th class="r">Poeng</th><th class="r">Siste GW</th>
-              <th>Trend</th><th>Snitt</th>
-              <th>Siste 5</th><th>Egon-risiko</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
+  <div class="section-wrap" id="stilling" style="padding-top:4rem;">
+    <div class="section-inner">
+      <p class="section-label">Ligastilling</p>
+      <h2 class="section-title">Stillingen</h2>
+      <div class="meter-card" style="padding:0;">
+        <div class="standings-wrap" style="padding:0.5rem 0;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Spiller</th>
+                <th class="r">Poeng</th><th class="r">Siste GW</th>
+                <th>Trend</th><th>Snitt</th>
+                <th>Siste 5</th><th>Egon-risiko</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </section>
-
-  <hr class="divider" />
+  </div>
 
   <!-- CHARTS -->
-  <section id="statistikk">
-    <p class="section-label">Statistikk</p>
-    <h2 class="section-title">Sesongen <em>så langt</em></h2>
-    <div class="grid-2" style="margin-bottom:1.2rem">
-      <div class="card">
-        <div class="card-label">Posisjon per runde</div>
-        <div class="chart-wrap"><canvas id="rankChart"></canvas></div>
+  <div class="section-wrap" id="statistikk">
+    <div class="section-inner">
+      <p class="section-label">Statistikk</p>
+      <h2 class="section-title">Sesongen <em>så langt</em></h2>
+      <div class="chart-grid" style="margin-bottom:1rem;">
+        <div class="chart-card">
+          <div class="chart-label">Posisjon per runde</div>
+          <div class="chart-wrap"><canvas id="rankChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-label">Poengutvikling</div>
+          <div class="chart-wrap"><canvas id="progChart"></canvas></div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card-label">Poengutvikling</div>
-        <div class="chart-wrap"><canvas id="progChart"></canvas></div>
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="chart-label">Form — siste 5 runder</div>
+          <div class="chart-wrap short"><canvas id="formChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-label">Snittpoeng per runde</div>
+          <div class="chart-wrap short"><canvas id="avgChart"></canvas></div>
+        </div>
       </div>
-    </div>
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-label">Form — siste 5 runder</div>
-        <div class="chart-wrap short"><canvas id="formChart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-label">Snittpoeng per runde</div>
-        <div class="chart-wrap short"><canvas id="avgChart"></canvas></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MODAL -->
-  <div id="gwModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:24px;padding:2rem;width:90%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.2);position:relative;">
-      <button onclick="document.getElementById('gwModal').style.display='none'" style="position:absolute;top:1rem;right:1rem;background:#f5f5f7;border:none;border-radius:99px;width:32px;height:32px;font-size:1rem;cursor:pointer;">✕</button>
-      <p style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:#6e6e73;margin-bottom:0.3rem;" id="modalLabel">—</p>
-      <h3 style="font-size:1.5rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:1.5rem;" id="modalTitle">—</h3>
-      <div id="modalList" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
     </div>
   </div>
 
@@ -578,9 +632,25 @@
     Oppdateres automatisk tirsdag og fredag · Monte Carlo 100 000 iterasjoner
   </footer>
 
+  <!-- MODAL -->
+  <div id="gwModal" onclick="if(event.target===this)this.style.display='none'">
+    <div class="modal-inner">
+      <button class="modal-close" onclick="document.getElementById('gwModal').style.display='none'">✕</button>
+      <p id="modalLabel">—</p>
+      <h3 id="modalTitle">—</h3>
+      <div id="modalList"></div>
+    </div>
+  </div>
+
 </div><!-- #app -->
 
 <script>
+// Nav scroll behavior
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
 const N_SIM = 100000;
 const palette = ['#007aff','#34c759','#ff3b30','#ff9500','#af52de','#5ac8fa','#ff2d55','#a2845e','#30d158','#ffd60a'];
 const setStatus = msg => document.getElementById('load-status').textContent = msg;
@@ -591,7 +661,7 @@ const randN = (mu,sig) => {
   while(!u)u=Math.random(); while(!v)v=Math.random();
   return mu + sig*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
 };
-const dangerColor = p => p>=25?'#ff3b30':p>=12?'#ff9500':p>=5?'#f5c842':'#34c759';
+const dangerColor = p => p>=25?'#ef4444':p>=12?'#f97316':p>=5?'#eab308':'#22c55e';
 
 async function init() {
   try {
@@ -646,18 +716,15 @@ function render(players, currentGW, remaining, rankHist, totalGW) {
 
   const fn = p => p.name.split(' ')[0]+' '+p.name.split(' ').slice(-1)[0];
 
-  // Nav + hero
   document.getElementById('navGw').textContent=`GW${currentGW} / ${totalGW}`;
   document.getElementById('heroLeader').textContent=leader.total;
   document.getElementById('heroLast').textContent=last.total;
   document.getElementById('heroDiff').textContent=leader.total-last.total;
   document.getElementById('heroGw').textContent=remaining;
 
-  // GW bar
   document.getElementById('gwBarFill').style.width=(currentGW/totalGW*100).toFixed(1)+'%';
   document.getElementById('gwBarRight').textContent=`${currentGW} av ${totalGW} runder spilt`;
 
-  // Summary
   document.getElementById('scLeader').textContent=fn(leader);
   document.getElementById('scLeaderSub').textContent=`${leader.total} pts`;
   document.getElementById('scLast').textContent=fn(last);
@@ -670,7 +737,6 @@ function render(players, currentGW, remaining, rankHist, totalGW) {
   document.getElementById('scWorst').textContent=`${worstPts} pts`;
   document.getElementById('scWorstSub').textContent=`${worstName} · GW${worstGW}`;
 
-  // Modal for beste/verste GW
   const GW_DATA = {
     best: {
       label: 'Beste runde i ligaen',
@@ -726,16 +792,16 @@ function render(players, currentGW, remaining, rankHist, totalGW) {
       const row = document.createElement('div');
       row.setAttribute('style',
         'display:flex;justify-content:space-between;align-items:center;' +
-        'padding:0.55rem 0.8rem;border-radius:10px;' +
-        'background:' + (p.bench ? '#fafafa' : '#f5f5f7') + ';' +
-        'opacity:' + (p.bench ? '0.45' : '1') + ';');
+        'padding:0.5rem 0.75rem;border-radius:10px;' +
+        'background:' + (p.bench ? 'rgba(0,0,0,0.02)' : 'rgba(0,0,0,0.03)') + ';' +
+        'opacity:' + (p.bench ? '0.4' : '1') + ';');
       const nameSpan = document.createElement('span');
-      nameSpan.setAttribute('style', 'font-size:0.88rem;font-weight:' + (p.bench ? '400' : '600') + ';');
+      nameSpan.setAttribute('style', 'font-size:0.86rem;font-weight:' + (p.bench ? '400' : '600') + ';');
       nameSpan.textContent = (p.captain ? '(C) ' : '') + p.name + (p.bench ? ' · Benk' : '');
       const ptsSpan = document.createElement('span');
       ptsSpan.setAttribute('style',
-        'font-weight:700;font-size:0.95rem;color:' +
-        (p.pts >= 10 ? '#059669' : p.pts <= 2 ? '#dc2626' : '#1d1d1f') + ';');
+        'font-weight:700;font-size:0.92rem;color:' +
+        (p.pts >= 10 ? '#16a34a' : p.pts <= 2 ? '#dc2626' : '#111') + ';');
       ptsSpan.textContent = p.pts + ' pts';
       row.appendChild(nameSpan);
       row.appendChild(ptsSpan);
@@ -744,9 +810,6 @@ function render(players, currentGW, remaining, rankHist, totalGW) {
     document.getElementById('gwModal').style.display = 'flex';
   };
 
-  document.getElementById('gwModal').addEventListener('click', function(e) {
-    if (e.target === this) this.style.display = 'none';
-  });
   document.getElementById('scRem').textContent=remaining;
   document.getElementById('scRemSub').textContent=`GW${currentGW+1} – GW${totalGW}`;
 
@@ -759,14 +822,16 @@ function render(players, currentGW, remaining, rankHist, totalGW) {
     el.innerHTML=`
       <div class="di-name"><strong>${p.name}</strong><span>${p.team}</span></div>
       <div class="di-track"><div class="di-fill" style="width:${Math.max(p.losePct,0.5).toFixed(2)}%;background:${col}"></div></div>
-      <div class="di-pct" style="color:${col}">${p.losePct < 0.5 ? '<span style="background:#d1fae5;color:#059669;padding:0.2rem 0.6rem;border-radius:99px;font-size:0.75rem;font-weight:700;">Trygg</span>' : p.losePct.toFixed(1)+'%'}</div>`;
+      <div class="di-pct" style="color:${col}">${p.losePct < 0.5
+        ? '<span style="background:#dcfce7;color:#16a34a;padding:0.18rem 0.6rem;border-radius:99px;font-size:0.7rem;font-weight:700;">Trygg</span>'
+        : p.losePct.toFixed(1)+'%'}</div>`;
     dl.appendChild(el);
   });
   document.getElementById('meterNote').textContent=
     `${N_SIM.toLocaleString('no')} simuleringer · ${remaining} runder igjen · basert på snitt og standardavvik per spiller`;
 
   // Standings
-  const chips=['p1','p2','p3','','','','','','',`last`];
+  const chips=['p1','p2','p3','','','','','','','last'];
   const tbody=document.getElementById('tbody');
   players.forEach((p,i)=>{
     const diff=p.lastRank-p.rank;
@@ -781,41 +846,40 @@ function render(players, currentGW, remaining, rankHist, totalGW) {
       <td><span class="${diff>0?'trend-up':diff<0?'trend-dn':'trend-eq'}">${diff>0?'▲'+diff:diff<0?'▼'+Math.abs(diff):'—'}</span></td>
       <td>${p.mean.toFixed(1)}</td>
       <td><div class="form-pips">${pips}</div></td>
-      <td><span class="risk-tag" style="color:${col};background:${col}18">${p.losePct.toFixed(1)}%</span></td>`;
+      <td><span class="risk-tag" style="color:${col};background:${col}1a">${p.losePct.toFixed(1)}%</span></td>`;
     tbody.appendChild(tr);
   });
 
-  // Chart defaults
   const co={
-    responsive:true, maintainAspectRatio:false, animation:{duration:600},
-    plugins:{legend:{labels:{color:'#6e6e73',font:{size:10,family:'Inter'},boxWidth:10,padding:12}}},
+    responsive:true, maintainAspectRatio:false, animation:{duration:700},
+    plugins:{legend:{labels:{color:'#b0b0aa',font:{size:10,family:'Inter'},boxWidth:8,padding:14}}},
     scales:{
-      x:{ticks:{color:'#aeaeb2',maxTicksLimit:10,font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}},
-      y:{ticks:{color:'#aeaeb2',font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}}
+      x:{ticks:{color:'#b0b0aa',maxTicksLimit:10,font:{size:10}},grid:{color:'rgba(0,0,0,0.03)'}},
+      y:{ticks:{color:'#b0b0aa',font:{size:10}},grid:{color:'rgba(0,0,0,0.03)'}}
     }
   };
 
   new Chart(document.getElementById('rankChart'),{type:'line',data:{labels:gwLabels,datasets:players.map((p,i)=>({
     label:p.name.split(' ')[0],data:rankHist[i],borderColor:palette[i],backgroundColor:'transparent',
-    borderWidth:(p.rank===1||p.rank===players.length)?2.5:1.5,pointRadius:0,tension:0.35}))},
+    borderWidth:(p.rank===1||p.rank===players.length)?2.5:1.5,pointRadius:0,tension:0.4}))},
     options:{...co,plugins:{...co.plugins,tooltip:{mode:'index',intersect:false,callbacks:{label:c=>` ${c.dataset.label}: #${c.parsed.y}`}}},
     scales:{x:co.scales.x,y:{...co.scales.y,reverse:true,min:1,max:players.length,ticks:{...co.scales.y.ticks,stepSize:1,callback:v=>`#${v}`}}}}});
 
   new Chart(document.getElementById('progChart'),{type:'line',data:{labels:gwLabels,datasets:players.map((p,i)=>{
     let c=0;return{label:p.name.split(' ')[0],data:p.gw.map(v=>{c+=v;return c;}),borderColor:palette[i],
-    backgroundColor:'transparent',borderWidth:(p.rank===1||p.rank===players.length)?2.5:1.5,pointRadius:0,tension:0.3};})},
+    backgroundColor:'transparent',borderWidth:(p.rank===1||p.rank===players.length)?2.5:1.5,pointRadius:0,tension:0.35};})},
     options:{...co,plugins:{...co.plugins,tooltip:{mode:'index',intersect:false}}}});
 
   const last5L=Array.from({length:5},(_,i)=>`GW${currentGW-4+i}`);
   new Chart(document.getElementById('formChart'),{type:'line',data:{labels:last5L,datasets:players.map((p,i)=>({
     label:p.name.split(' ')[0],data:p.last5,borderColor:palette[i],backgroundColor:'transparent',
-    borderWidth:2,pointRadius:5,tension:0.3}))},
+    borderWidth:2,pointRadius:4,tension:0.35}))},
     options:{...co,plugins:{...co.plugins,tooltip:{mode:'index',intersect:false}}}});
 
   const sa=[...players].sort((a,b)=>a.mean-b.mean);
   new Chart(document.getElementById('avgChart'),{type:'bar',data:{labels:sa.map(p=>p.name.split(' ')[0]),
     datasets:[{label:'Snitt',data:sa.map(p=>+p.mean.toFixed(1)),
-    backgroundColor:sa.map((p,i)=>i===0?'rgba(255,59,48,0.7)':`${palette[i]||palette[0]}99`),
+    backgroundColor:sa.map((p,i)=>i===0?'rgba(239,68,68,0.65)':`${palette[i]||palette[0]}99`),
     borderRadius:6,borderSkipped:false}]},
     options:{...co,indexAxis:'y',plugins:{...co.plugins,legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.parsed.x} pts/runde`}}},
     scales:{x:{...co.scales.x,min:40},y:{...co.scales.y,grid:{display:false}}}}});
@@ -823,7 +887,6 @@ function render(players, currentGW, remaining, rankHist, totalGW) {
 
 init();
 
-// Nedtelling til GW38 — 25. mai 2026
 const gw38 = new Date('2026-05-25');
 const today = new Date();
 const daysLeft = Math.ceil((gw38 - today) / (1000 * 60 * 60 * 24));
